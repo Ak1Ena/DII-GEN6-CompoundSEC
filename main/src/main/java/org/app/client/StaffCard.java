@@ -11,6 +11,9 @@ public class StaffCard extends Card {
     public StaffCard(int id, String name, Date expireDate, int floor, int room) {
         super(id, name, expireDate, floor, room);
     }
+    //control//edit
+
+    //revoke
 
     @Override
     protected void acessibility() {

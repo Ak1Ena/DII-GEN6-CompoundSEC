@@ -12,6 +12,8 @@ public class VisitorCard extends Card {
         super(id, name, expireDate, floor, room);
     }
 
+    //view room details only
+
     @Override
     protected void acessibility() {
         setAccressibiliy("Visitor");
