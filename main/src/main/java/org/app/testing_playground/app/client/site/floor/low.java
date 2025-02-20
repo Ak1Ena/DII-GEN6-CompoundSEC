@@ -3,7 +3,7 @@ package org.app.testing_playground.app.client.site.floor;
 //import org.app.testing_playground.app.client.tools.*;
 
 import org.app.client.tools.CustomLabel;
-import org.app.client.tools.UiForm;
+import org.app.testing_playground.app.client.tools.UiForm;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
