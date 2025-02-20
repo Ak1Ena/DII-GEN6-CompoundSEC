@@ -1,4 +1,4 @@
-package org.app.client.tools;
+package org.app.testing_playground.app.client.tools;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ItemEvent;
