@@ -21,7 +21,7 @@ public class AppInterface {
         frame.add(nav,BorderLayout.NORTH);
 
         Sidebar sidebar = new Sidebar();
-        frame.add(sidebar.sidebar(),BorderLayout.WEST);
+        frame.add(sidebar.sidebar(frame),BorderLayout.WEST);
 
         InfoDisplay infoDisplay = new InfoDisplay();
         frame.add(infoDisplay.infoDisplay());

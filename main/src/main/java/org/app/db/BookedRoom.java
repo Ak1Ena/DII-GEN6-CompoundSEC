@@ -26,7 +26,7 @@ public class BookedRoom {
     }
 
     private void loadBookedRooms(String floor){
-        try(FileReader reader = new FileReader("booked_rooms.json")){
+        try(FileReader reader = new FileReader("C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json")){
             BufferedReader bufferedReader = new BufferedReader(reader);
             StringBuilder content = new StringBuilder();
             String line;

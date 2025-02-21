@@ -10,6 +10,7 @@ public class NavBar {
         navbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
 
         navbar.add(user());
+        navbar.add(floor_menagement());
         navbar.add(logs());
 
         navbar.setBorder(new MatteBorder(0,20,0,20,Color.white));
@@ -28,6 +29,13 @@ public class NavBar {
         JButton toLogs = new JButton("LOGS");
         toLogs.setPreferredSize(new Dimension(200,100));
         return toLogs;
+    }
+
+    private JButton floor_menagement(){
+        JButton toFloor_menagement = new JButton("FLOOR MENAGEMENT");
+        toFloor_menagement.setPreferredSize(new Dimension(200,100));
+
+        return toFloor_menagement;
     }
 
 
