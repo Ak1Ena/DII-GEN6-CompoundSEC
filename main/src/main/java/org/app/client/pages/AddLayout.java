@@ -1,15 +1,18 @@
 package org.app.client.pages;
 
 import org.app.db.BookedRoom;
+import org.app.server.tools.JSONWriter;
+import org.app.server.enceypt.Encryption;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.Arrays;
 
 public class AddLayout {
-
+    private String[] data;
     public JDialog add_display(JFrame parent) {
         JDialog addDialog = new JDialog(parent, "Add Management", true);
         addDialog.setLayout(new GridBagLayout());
@@ -31,19 +34,49 @@ public class AddLayout {
         JFormattedTextField numberField = new JFormattedTextField(numberFormat);
         numberField.setColumns(10);
 
+        BookedRoom bookedRoom = new BookedRoom(String.valueOf(floorSelect.getSelectedItem()));
+
+
+        //save button
         JButton saveButton = new JButton("Save");
+        saveButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JSONWriter jsonWriter = new JSONWriter();
+                JOptionPane.showMessageDialog(addDialog,"Submitted!");
+                for (int i = 0; i < bookedRoom.getData().length; i++) {
+                    if (bookedRoom.getData()[i] != null) {
+                        jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json");
+                    }
+                }
+                try {
+                    bookedRoom.addData(nameField.getText(), bookedRoom.getData(), (String) floorSelect.getSelectedItem(),Integer.parseInt(numberField.getText()),"C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json");
+                }catch (NumberFormatException exception){
+                    System.out.println(exception);
+                }
+                addDialog.setVisible(false);
+            }
+        });
+
+
+
+        //cancel button
         JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addDialog.setVisible(false);
+            }
+        });
 
         // Panel สำหรับแสดงตาราง
         JPanel tableContainer = new JPanel(new BorderLayout());
 
-        // ActionListener สำหรับ JComboBox
         floorSelect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                tableContainer.removeAll(); // ลบตารางเดิมออก
-                BookedRoom room = new BookedRoom(String.valueOf(floorSelect.getSelectedItem()));
-                JPanel table = room.getTable();
+                tableContainer.removeAll();
+                JPanel table = bookedRoom.getTable((String)floorSelect.getSelectedItem());
                 tableContainer.add(table, BorderLayout.CENTER);
                 tableContainer.revalidate();
                 tableContainer.repaint();

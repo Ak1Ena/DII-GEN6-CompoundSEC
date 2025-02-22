@@ -3,8 +3,9 @@ package org.app.server.enceypt;
 import java.util.Base64;
 
 public class Encryption {
-    public static String encrypt(String name, int room, int floor, int days) {
-        String data = name + "-" + room + "-" + floor + "-" + days + "-";
+    public static String encrypt(String name, String[] rooms, String floor, int days) {
+        String roomData = String.join(",", rooms);
+        String data = name + "-" + roomData + "-" + floor + "-" + days + "-";
         return Base64.getEncoder().encodeToString(data.getBytes());
     }
 

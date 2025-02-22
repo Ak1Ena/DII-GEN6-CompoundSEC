@@ -5,7 +5,7 @@ public class Staff_Card extends Card{
     private String department;
     private String access_level;
 
-    public Staff_Card(String name, int room, int floor, int days, String password, String position) {
+    public Staff_Card(String name, String[] room,String floor, int days, String password, String position) {
         super(name, room, floor, days, password);
         this.position = position;
     }

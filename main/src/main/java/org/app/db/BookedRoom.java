@@ -1,6 +1,7 @@
 package org.app.db;
 
 import org.app.db.tools.CustomLabel;
+import org.app.server.enceypt.Encryption;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -8,9 +9,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.stream.Collectors;
 
 public class BookedRoom {
 
@@ -47,7 +53,7 @@ public class BookedRoom {
         }
     }
 
-    public JPanel getTable(){
+    public JPanel getTable(String floor){
         JPanel table = new JPanel();
         table.setLayout(new GridLayout(5,5,10,10));
         CustomLabel[] labels = new CustomLabel[15];
@@ -98,7 +104,8 @@ public class BookedRoom {
                             label.setData("Selected");
                         }
                         System.out.println("Label Name: " + label.getText());
-                        data[j++] = label.getText();
+                        data[j] = label.getText();
+                        j++;
                     }
                 });
 
@@ -114,4 +121,53 @@ public class BookedRoom {
     public String[] getData() {
         return data;
     }
+
+    public void addData(String name, String[] room, String floor, int days, String FILE_PATH){
+
+        try {
+            File file = new File(FILE_PATH);
+            JSONObject root = new JSONObject();
+            JSONArray dataArray = new JSONArray();
+            JSONArray roomArray = new JSONArray();
+            if (room != null) {
+                roomArray = new JSONArray(Arrays.stream(room)
+                        .filter(r -> r != null && !r.isEmpty()) // กรองค่า null และค่าว่าง
+                        .collect(Collectors.toList()));
+            }
+
+            if (file.exists() && file.length()>0) {
+                String content = new String(Files.readAllBytes(Paths.get(FILE_PATH)));
+                root = new JSONObject(content);
+                dataArray = root.getJSONArray("data");
+            }else {
+                root = new JSONObject();
+                dataArray = new JSONArray();
+                root.put("data", dataArray);
+            }
+
+
+            LocalDate today = LocalDate.now();
+            JSONObject newData = new JSONObject();
+            newData.put("ID", Encryption.encrypt(name,room,floor,days));
+            newData.put("Name",name);
+            newData.put("Room",roomArray);
+            newData.put("Floor",floor);
+            newData.put("Expire date",today.plusDays(days));
+
+            dataArray.put(newData);
+
+            try(FileWriter writer = new FileWriter(FILE_PATH)){
+                writer.write(root.toString(2));
+                writer.flush();
+                System.out.println("บันทึกข้อมูลเสร็จสิ้น!!!!");
+            }
+
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+
+
+    }
+
 }

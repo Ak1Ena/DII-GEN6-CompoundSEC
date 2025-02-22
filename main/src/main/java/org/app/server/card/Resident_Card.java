@@ -5,7 +5,7 @@ public class Resident_Card extends Card {
     private String emergency_contact;
     private boolean isOwner;
 
-    public Resident_Card(String name, int room, int floor, int days, String password, String apartment_number) {
+    public Resident_Card(String name, String[] room,String floor, int days, String password, String apartment_number) {
         super(name, room, floor, days, password);
         this.apartment_number = apartment_number;
     }

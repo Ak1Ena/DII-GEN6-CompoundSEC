@@ -6,12 +6,14 @@ import org.app.server.enceypt.Encryption;
 
 public abstract class Card {
     private String id,name;
-    private int room,floor,days;
+    private int days;
+    private String floor;
     private Date expite_date;
     private String piority;
     private String password;
+    private String[] room;
 
-    Card(String name,int room,int floor,int days,String password){
+    Card(String name,String[] room,String floor,int days,String password){
         this.id = setId(name, room, floor, days);
         this.name = name;
         this.room = room;
@@ -24,7 +26,7 @@ public abstract class Card {
         this.expite_date = expite_date;
     }
 
-    public void setRoom(int room) {
+    public void setRoom(String[] room) {
         this.room = room;
     }
 
@@ -32,7 +34,7 @@ public abstract class Card {
         this.days = days;
     }
 
-    public void setFloor(int floor) {
+    public void setFloor(String floor) {
         this.floor = floor;
     }
 
@@ -46,7 +48,7 @@ public abstract class Card {
 
 
     //ID -> Encryption -> return
-    public String setId(String name,int room,int floor,int days) {
+    public String setId(String name,String[] room,String floor,int days) {
         return Encryption.encrypt(name, room, floor, days);
     }
 
