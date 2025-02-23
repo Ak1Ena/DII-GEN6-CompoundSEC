@@ -36,7 +36,7 @@ public class UserSlideBar {
     public void addUserCardsFromJson() {
         try {
             Gson gson = new Gson();
-            FileReader reader = new FileReader(FILE_PATH); // Use the correct path
+            FileReader reader = new FileReader(FILE_PATH);
             DataWrapper dataWrapper = gson.fromJson(reader, DataWrapper.class);
             reader.close();
 
@@ -56,7 +56,7 @@ public class UserSlideBar {
     private void modifyUser(JPanel card, String name, String floor) {
         JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(card), "Modify User", true);
         dialog.setSize(400, 300);
-        dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS)); // Set BoxLayout for vertical arrangement
+        dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
         // Create input fields for name and floor
         JTextField nameField = new JTextField(name);
@@ -79,7 +79,6 @@ public class UserSlideBar {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         // Action for save button
-        // Action for save button
         saveButton.addActionListener(e -> {
             String updatedName = nameField.getText();
             String updatedFloor = (String) floorSelect.getSelectedItem();
@@ -89,7 +88,7 @@ public class UserSlideBar {
 
             // Remove the old card and add the updated card
             user.remove(card);
-            userCards.remove(card);  // Remove the old card from the list
+            userCards.remove(card);
 
             // Add new card with updated info
             addUserCard(updatedName, updatedFloor, new ArrayList<>(), userId);
@@ -101,12 +100,11 @@ public class UserSlideBar {
             dialog.dispose();
         });
 
-
-
         // Display the dialog
-        dialog.setLocationRelativeTo(card);  // Center the dialog relative to the card
+        dialog.setLocationRelativeTo(card);
         dialog.setVisible(true);
     }
+
     private void updateUserInJson(String userId, String updatedName, String updatedFloor) {
         try {
             String jsonText = new String(Files.readAllBytes(Paths.get(FILE_PATH)), StandardCharsets.UTF_8);
@@ -120,15 +118,13 @@ public class UserSlideBar {
             JSONArray dataArray = jsonObj.getJSONArray("data");
             boolean updated = false;
 
-            // Loop through the JSONArray and find the user with the matching ID
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject user = dataArray.getJSONObject(i);
                 if (user.optString("ID").equals(userId)) {
-                    // Update the user information
                     user.put("Name", updatedName);
                     user.put("Floor", updatedFloor);
                     updated = true;
-                    break;  // Exit the loop once the user is updated
+                    break;
                 }
             }
 
@@ -150,13 +146,18 @@ public class UserSlideBar {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        card.add(new JLabel(name + " - " + floor), BorderLayout.CENTER);
 
-        // Store the ID in the card for easy access
+        JPanel panel = new JPanel(new GridLayout(3, 1));
+        panel.add(new JLabel("UserID : " + id));
+        panel.add(new JLabel("Floor : " + floor));
+        panel.add(new JLabel("Room : " + rooms));
+
+        card.add(panel, BorderLayout.CENTER);
+
         card.putClientProperty("ID", id);
 
         JButton modifyButton = new JButton("Modify");
-        JButton revokeButton = new JButton("...");
+        JButton revokeButton = new JButton("Revoke");
         modifyButton.addActionListener(e -> modifyUser(card, name, floor));
         revokeButton.addActionListener(e -> revokeUser(card, rooms));
 
@@ -177,18 +178,13 @@ public class UserSlideBar {
             user.remove(card);
             userCards.remove(card);
 
-            // Retrieve the ID from the card
             String userId = (String) card.getClientProperty("ID");
-            String floor = (String) ((JLabel) card.getComponent(0)).getText().split(" - ")[1]; // Extract floor from label
 
             if (userId != null) {
                 removeUserFromJson(userId);
-                removeRoomFromBookedRoom(floor, room);  // Remove the corresponding room from Booked_room.json
-            } else {
-                System.out.println("Error: Cannot retrieve ID");
+                removeRoomFromBookedRoom(room);
             }
 
-            // Refresh UI once all changes are made
             user.revalidate();
             user.repaint();
         }
@@ -207,14 +203,12 @@ public class UserSlideBar {
             JSONArray dataArray = jsonObj.getJSONArray("data");
             boolean removed = false;
 
-            // Loop through the JSONArray and find the user with the matching ID
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject user = dataArray.getJSONObject(i);
                 if (user.optString("ID").equals(userId)) {
-                    // User found, remove from the JSONArray
                     dataArray.remove(i);
                     removed = true;
-                    break;  // Exit the loop once the user is removed
+                    break;
                 }
             }
 
@@ -229,88 +223,49 @@ public class UserSlideBar {
             System.out.println("User with ID: " + userId + " removed successfully!");
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (org.json.JSONException e) {
-            System.out.println("Error: Invalid JSON structure");
-            e.printStackTrace();
         }
     }
 
-    private void removeRoomFromBookedRoom(String floor, List<String> roomsToRemove) {
+    private void removeRoomFromBookedRoom(List<String> roomsToRemove) {
         try {
-            // Read the Booked_room.json file
             String jsonText = new String(Files.readAllBytes(Paths.get(BOOKED_ROOM_PATH)), StandardCharsets.UTF_8);
             JSONObject jsonObj = new JSONObject(jsonText);
-
-            // Check if the floor exists in the JSON
-            if (!jsonObj.has(floor) || jsonObj.isNull(floor)) {
-                System.out.println("Error: JSON does not contain floor key or it is null");
-                return;
-            }
-
-
-            // Get the room array for the floor
-            JSONArray roomArray = jsonObj.getJSONObject(floor).getJSONArray("room");
-            System.out.println("Current rooms in " + floor + ": " + roomArray.toString());  // Debugging
-
-            JSONArray updatedRoomArray = new JSONArray();
             boolean roomRemoved = false;
 
-            // Loop through the rooms to check if the room exists
-            for (int i = 0; i < roomArray.length(); i++) {
-                String roomName = roomArray.getString(i).trim();  // Trim whitespace
-                System.out.println("Checking room: " + roomName);  // Debugging
+            for (String floor : jsonObj.keySet()) {
+                JSONObject floorObject = jsonObj.getJSONObject(floor);
+                JSONArray roomArray = floorObject.getJSONArray("room");
+                JSONArray updatedRooms = new JSONArray();
 
-                boolean removeThisRoom = false;
-                for (String removeRoom : roomsToRemove) {
-                    String trimmedRemoveRoom = removeRoom.trim();  // Trim the room name being passed in
-                    System.out.println("Trying to remove: " + trimmedRemoveRoom);  // Debugging
-                    if (trimmedRemoveRoom.equals(roomName)) {  // Trim the value being compared
-                        removeThisRoom = true;
+                for (int i = 0; i < roomArray.length(); i++) {
+                    String room = roomArray.getString(i);
+                    if (!roomsToRemove.contains(room)) {
+                        updatedRooms.put(room);
+                    } else {
                         roomRemoved = true;
-                        System.out.println("Room " + roomName + " removed.");
-                        break;
                     }
                 }
 
-                // If the room should not be removed, add it to the new array
-                if (!removeThisRoom) {
-                    updatedRoomArray.put(roomName);
-                }
+                floorObject.put("room", updatedRooms);
             }
 
-            // If rooms were removed, write the updated JSON back to the file
             if (roomRemoved) {
-                jsonObj.getJSONObject(floor).put("room", updatedRoomArray);
                 Files.write(Paths.get(BOOKED_ROOM_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
-                System.out.println("Room(s) removed successfully!");
-            } else {
-                System.out.println("Error: No matching room found in Booked_room.");
+                System.out.println("Room(s) removed successfully.");
             }
-
         } catch (IOException | org.json.JSONException e) {
             e.printStackTrace();
         }
     }
 
-    // ฟังก์ชั่นเช็คว่าอาเรย์มีค่าที่ตรงกันหรือไม่
-    private boolean contains(String[] arr, String value) {
-        for (String str : arr) {
-            if (str.equals(value)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static class DataWrapper {
+    public static class DataWrapper {
         List<FloorData> data;
     }
 
     public static class FloorData {
-        String Floor;
-        String ExpireDate;
-        String ID;
-        List<String> Room;
         String Name;
+        String Floor;
+        List<String> Room;
+        String ID;
     }
 }

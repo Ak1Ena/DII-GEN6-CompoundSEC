@@ -4,6 +4,7 @@ import org.app.db.tools.CustomLabel;
 import org.app.server.enceypt.Encryption;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.app.client.tools.PasswordGenerator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -149,6 +150,7 @@ public class BookedRoom {
             LocalDate today = LocalDate.now();
             JSONObject newData = new JSONObject();
             newData.put("ID", Encryption.encrypt(name,room,floor,days));
+            newData.put("Password",PasswordGenerator.generatePassword(6));
             newData.put("Name",name);
             newData.put("Room",roomArray);
             newData.put("Floor",floor);

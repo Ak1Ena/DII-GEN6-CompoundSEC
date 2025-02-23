@@ -11,23 +11,24 @@ public class AppInterface {
 
     public JFrame app(){
         JFrame frame = new JFrame();
-        frame.setExtendedState(Frame.MAXIMIZED_BOTH);
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(Color.WHITE);
 
         NavBar navBar = new NavBar();
         JPanel nav = navBar.navbar();
         nav.setBackground(Color.white);
-        frame.add(nav,BorderLayout.NORTH);
+        frame.add(nav,BorderLayout.EAST);
 
         Sidebar sidebar = new Sidebar();
         frame.add(sidebar.sidebar(frame),BorderLayout.WEST);
 
+        /*
         InfoDisplay infoDisplay = new InfoDisplay();
         frame.add(infoDisplay.infoDisplay());
-
+*/
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.pack();
         return frame;
     }
 
