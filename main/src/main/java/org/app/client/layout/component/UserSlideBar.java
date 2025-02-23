@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.google.gson.Gson;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class UserSlideBar {
 
     public UserSlideBar() {
         user = new JPanel();
-        user.setLayout(new BoxLayout(user, BoxLayout.Y_AXIS)); // Arrange cards vertically
+        user.setLayout(new BoxLayout(user, BoxLayout.Y_AXIS));
         userCards = new ArrayList<>();
     }
 
@@ -32,7 +35,6 @@ public class UserSlideBar {
         return user_menage;
     }
 
-    // Function to add user cards from data.json
     public void addUserCardsFromJson() {
         try {
             Gson gson = new Gson();
@@ -40,7 +42,6 @@ public class UserSlideBar {
             DataWrapper dataWrapper = gson.fromJson(reader, DataWrapper.class);
             reader.close();
 
-            // Add cards from the data read
             addUserCards(dataWrapper.data);
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,59 +54,53 @@ public class UserSlideBar {
         }
     }
 
-    private void modifyUser(JPanel card, String name, String floor) {
+    private void modifyUser(JPanel card, String name, String floor, List<String> rooms) {
         JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(card), "Modify User", true);
         dialog.setSize(400, 300);
         dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
-        // Create input fields for name and floor
         JTextField nameField = new JTextField(name);
-        JComboBox<String> floorSelect = new JComboBox<>(new String[]{"Low Floor", "Medium Floor", "High Floor"});
-        floorSelect.setSelectedItem(floor);
+        JTextField expireDateField = new JTextField();
 
-        // Create buttons for save and cancel
         JButton saveButton = new JButton("Save");
         JButton cancelButton = new JButton("Cancel");
 
-        // Add components to dialog with BoxLayout
         dialog.add(new JLabel("Name:"));
         dialog.add(nameField);
-        dialog.add(new JLabel("Floor:"));
-        dialog.add(floorSelect);
+        dialog.add(new JLabel("Days :"));
+        dialog.add(expireDateField);
         dialog.add(saveButton);
         dialog.add(cancelButton);
 
-        // Action for cancel button
         cancelButton.addActionListener(e -> dialog.dispose());
 
-        // Action for save button
         saveButton.addActionListener(e -> {
             String updatedName = nameField.getText();
-            String updatedFloor = (String) floorSelect.getSelectedItem();
+            int dayToAdd = Integer.parseInt(expireDateField.getText());
+            LocalDate currentDate = LocalDate.now();
+            LocalDate modifyExpireDate = currentDate.plusDays(dayToAdd);
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-            // Retrieve the user ID from the card
+
+            String updatedExpireDate = modifyExpireDate.format(formatter);
             String userId = (String) card.getClientProperty("ID");
 
-            // Remove the old card and add the updated card
             user.remove(card);
             userCards.remove(card);
+            addUserCard(updatedName, floor, rooms, userId);
 
-            // Add new card with updated info
-            addUserCard(updatedName, updatedFloor, new ArrayList<>(), userId);
-
-            updateUserInJson(userId, updatedName, updatedFloor);
+            updateUserInJson(userId, updatedName, rooms, updatedExpireDate);
             user.revalidate();
             user.repaint();
 
             dialog.dispose();
         });
 
-        // Display the dialog
         dialog.setLocationRelativeTo(card);
         dialog.setVisible(true);
     }
 
-    private void updateUserInJson(String userId, String updatedName, String updatedFloor) {
+    private void updateUserInJson(String userId, String updatedName, List<String> updatedRooms, String updatedExpireDate) {
         try {
             String jsonText = new String(Files.readAllBytes(Paths.get(FILE_PATH)), StandardCharsets.UTF_8);
             JSONObject jsonObj = new JSONObject(jsonText);
@@ -122,7 +117,8 @@ public class UserSlideBar {
                 JSONObject user = dataArray.getJSONObject(i);
                 if (user.optString("ID").equals(userId)) {
                     user.put("Name", updatedName);
-                    user.put("Floor", updatedFloor);
+                    user.put("Room", new JSONArray(updatedRooms));
+                    user.put("Expire date", updatedExpireDate);
                     updated = true;
                     break;
                 }
@@ -147,18 +143,17 @@ public class UserSlideBar {
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        JPanel panel = new JPanel(new GridLayout(3, 1));
+        JPanel panel = new JPanel(new GridLayout(4, 1));
         panel.add(new JLabel("UserID : " + id));
         panel.add(new JLabel("Floor : " + floor));
-        panel.add(new JLabel("Room : " + rooms));
+        panel.add(new JLabel("Room : " + String.join(", ", rooms)));
 
         card.add(panel, BorderLayout.CENTER);
-
         card.putClientProperty("ID", id);
 
         JButton modifyButton = new JButton("Modify");
         JButton revokeButton = new JButton("Revoke");
-        modifyButton.addActionListener(e -> modifyUser(card, name, floor));
+        modifyButton.addActionListener(e -> modifyUser(card, name, floor, rooms));
         revokeButton.addActionListener(e -> revokeUser(card, rooms));
 
         JPanel buttonPanel = new JPanel();
@@ -267,5 +262,6 @@ public class UserSlideBar {
         String Floor;
         List<String> Room;
         String ID;
+        String ExpireDate;
     }
 }
