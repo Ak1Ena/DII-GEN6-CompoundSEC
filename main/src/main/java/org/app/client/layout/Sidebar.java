@@ -18,7 +18,11 @@ public class Sidebar {
         sidebar.add(addButton.add(frame), BorderLayout.NORTH);
 
         UserSlideBar slideBar = new UserSlideBar();
+        slideBar.addUserCardsFromJson();
+
         sidebar.add(slideBar.userSlideBar(), BorderLayout.CENTER);
+
+
 
         sidebar.setBorder(BorderFactory.createLineBorder(Color.white,20));
 

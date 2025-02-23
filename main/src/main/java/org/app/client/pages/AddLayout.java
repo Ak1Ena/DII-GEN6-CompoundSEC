@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 public class AddLayout {
     private String[] data;
+    private BookedRoom bookedRoom;
+    private JPanel tableContainer;
     public JDialog add_display(JFrame parent) {
         JDialog addDialog = new JDialog(parent, "Add Management", true);
         addDialog.setLayout(new GridBagLayout());
@@ -34,7 +36,19 @@ public class AddLayout {
         JFormattedTextField numberField = new JFormattedTextField(numberFormat);
         numberField.setColumns(10);
 
-        BookedRoom bookedRoom = new BookedRoom(String.valueOf(floorSelect.getSelectedItem()));
+
+        floorSelect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableContainer.removeAll();
+                bookedRoom = new BookedRoom((String) floorSelect.getSelectedItem()); // เปลี่ยนค่าตัวแปรระดับคลาส
+                JPanel table = bookedRoom.getTable((String) floorSelect.getSelectedItem());
+                tableContainer.add(table, BorderLayout.CENTER);
+                tableContainer.revalidate();
+                tableContainer.repaint();
+            }
+        });
+
 
 
         //save button
@@ -47,6 +61,8 @@ public class AddLayout {
                 for (int i = 0; i < bookedRoom.getData().length; i++) {
                     if (bookedRoom.getData()[i] != null) {
                         jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json");
+                    }else {
+                        break;
                     }
                 }
                 try {
@@ -58,7 +74,20 @@ public class AddLayout {
             }
         });
 
+        bookedRoom = new BookedRoom("Low");
+        tableContainer = new JPanel(new BorderLayout());
 
+        floorSelect.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tableContainer.removeAll();
+                bookedRoom = new BookedRoom((String) floorSelect.getSelectedItem());
+                JPanel table = bookedRoom.getTable((String) floorSelect.getSelectedItem());
+                tableContainer.add(table, BorderLayout.CENTER);
+                tableContainer.revalidate();
+                tableContainer.repaint();
+            }
+        });
 
         //cancel button
         JButton cancelButton = new JButton("Cancel");
@@ -70,18 +99,6 @@ public class AddLayout {
         });
 
         // Panel สำหรับแสดงตาราง
-        JPanel tableContainer = new JPanel(new BorderLayout());
-
-        floorSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tableContainer.removeAll();
-                JPanel table = bookedRoom.getTable((String)floorSelect.getSelectedItem());
-                tableContainer.add(table, BorderLayout.CENTER);
-                tableContainer.revalidate();
-                tableContainer.repaint();
-            }
-        });
 
         // จัดเรียง Components ใน Layout
         addDialog.add(new JLabel("Name:"), gbc);

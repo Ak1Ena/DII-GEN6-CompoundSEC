@@ -167,7 +167,10 @@ public class BookedRoom {
         }
 
 
-
     }
 
+    public void setData(String[] data) {
+        j = 0;
+        this.data = data;
+    }
 }
