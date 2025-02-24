@@ -2,12 +2,11 @@ package org.app.client;
 
 import org.app.client.layout.Sidebar;
 import org.app.client.layout.NavBar;
-import org.app.client.layout.InfoDisplay;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class AppInterface {
+public class AdminInterface {
 
     public JFrame app(){
         JFrame frame = new JFrame();
@@ -33,7 +32,7 @@ public class AppInterface {
     }
 
     public static void main(String[] args) {
-        AppInterface run = new AppInterface();
+        AdminInterface run = new AdminInterface();
         run.app();
     }
 
