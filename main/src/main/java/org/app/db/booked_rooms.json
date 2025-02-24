@@ -1,5 +1,8 @@
 {
-    "High": {"room": []},
-    "Low": {"room": ["A101"]},
-    "Medium": {"room": []}
+    "High": {"room": ["C301"]},
+    "Low": {"room": [
+        "A101",
+        "A102"
+    ]},
+    "Medium": {"room": ["B201"]}
 }

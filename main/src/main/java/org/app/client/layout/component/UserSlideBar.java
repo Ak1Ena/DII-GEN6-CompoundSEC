@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import org.app.db.Logs;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import com.google.gson.Gson;
@@ -133,6 +135,8 @@ public class UserSlideBar {
             Files.write(Paths.get(FILE_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
 
             System.out.println("User with ID: " + userId + " updated successfully!");
+            Logs logs = new Logs();
+            logs.addToLogs("Admin","Modify",userId,"SUCCESS");
         } catch (IOException | org.json.JSONException e) {
             e.printStackTrace();
         }
@@ -214,7 +218,8 @@ public class UserSlideBar {
 
             jsonObj.put("data", dataArray);
             Files.write(Paths.get(FILE_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
-
+            Logs logs = new Logs();
+            logs.addToLogs("Admin","Revoke",userId,"SUCCESS");
             System.out.println("User with ID: " + userId + " removed successfully!");
         } catch (IOException e) {
             e.printStackTrace();

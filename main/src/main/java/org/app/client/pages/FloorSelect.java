@@ -1,6 +1,7 @@
 package org.app.client.pages;
 
 import org.app.client.tools.AccessCheck;
+import org.app.db.Logs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,6 +15,7 @@ public class FloorSelect {
     private AccessCheck accessCheck;
 
     public JFrame run() {
+        Logs logs = new Logs();
         JFrame frame = new JFrame("Floor Selector");
         frame.setSize(500, 250);
         frame.setLayout(new FlowLayout(5, 6, 2));
@@ -34,6 +36,7 @@ public class FloorSelect {
                 System.out.println(low.getText());
                 if (accessCheck.checkUserFloor(low.getText())) {
                     try {
+                        logs.addToLogs("User","Access LOW FLOOR",accessCheck.getUserID(),"SUCCESS");
                         roomSelect.run(low.getText());
                         frame.dispose();
                     } catch (IOException ex) {
@@ -41,6 +44,7 @@ public class FloorSelect {
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
+                    logs.addToLogs("User","Access LOW FLOOR",accessCheck.getUserID(),"DENIED");
                 }
             }
         });
@@ -54,12 +58,15 @@ public class FloorSelect {
                 if (accessCheck.checkUserFloor(medium.getText())) {
                     try {
                         roomSelect.run(medium.getText());
+                        logs.addToLogs("User","Access MEDIUM FLOOR",accessCheck.getUserID(),"SUCCESS");
                         frame.dispose();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
+                    logs.addToLogs("User","Access MEDIUM FLOOR",accessCheck.getUserID(),"DENINE");
+
                 }
             }
         });
@@ -73,12 +80,15 @@ public class FloorSelect {
                 if (accessCheck.checkUserFloor(high.getText())) {
                     try {
                         roomSelect.run(high.getText());
+                        logs.addToLogs("User","Access HIGH FLOOR",accessCheck.getUserID(),"SUCCESS");
                         frame.dispose();
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
                 } else {
                     JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
+                    logs.addToLogs("User","Access HIGH FLOOR",accessCheck.getUserID(),"DENIED");
+
                 }
             }
         });

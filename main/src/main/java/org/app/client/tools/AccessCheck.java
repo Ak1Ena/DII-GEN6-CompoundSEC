@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 public class AccessCheck {
 
     private final String FILE_PATH = "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
-    private JSONArray data;
+    private static JSONArray data;
     private static int userID;
 
     public AccessCheck() throws IOException {
@@ -75,6 +75,11 @@ public class AccessCheck {
         System.out.println("Login status: " + ac.checkUser("TEST", "5jZ06A"));
         System.out.println("Check floor: " + ac.checkUserFloor("Low"));
         System.out.println("Check room: " + ac.checkUserRoom("A101"));
+    }
+
+    public String getUserID() {
+        JSONObject user = data.getJSONObject(userID);
+        return user.optString("ID");
     }
 }
 

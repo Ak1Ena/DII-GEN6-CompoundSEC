@@ -2,6 +2,7 @@ package org.app.client.pages;
 
 import org.app.client.UserInterface;
 import org.app.client.tools.AccessCheck;
+import org.app.db.Logs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +16,7 @@ public class RoomSelect {
         JFrame frame = new JFrame("Floor Selector");
         frame.setSize(500, 250);
         frame.setLayout(new FlowLayout(5, 6, 2));
-
+        Logs logs = new Logs();
         String[] rooms = switch (floor) {
             case "Low" -> new String[] { "A101", "A102", "A103", "A104", "A105", "A106", "A107", "A108", "A109", "A110", "A111", "A112", "A113", "A114", "A115" };
             case "Medium" -> new String[] { "B201", "B202", "B203", "B204", "B205", "B206", "B207", "B208", "B209", "B210", "B211", "B212", "B213", "B214", "B215" };
@@ -41,9 +42,13 @@ public class RoomSelect {
                 if (accessCheck.checkUserRoom((String) roomComboBox.getSelectedItem())){
                     UserInterface userInterface = new UserInterface();
                     userInterface.run();
+                    logs.addToLogs("User","Access ROOM "+(String) roomComboBox.getSelectedItem(),accessCheck.getUserID(),"SUCCESS");
+
                     frame.dispose();
                 }else {
                     JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
+                    logs.addToLogs("User","Access ROOM "+(String) roomComboBox.getSelectedItem(),accessCheck.getUserID(),"DENIED");
+
                 }
 
             }

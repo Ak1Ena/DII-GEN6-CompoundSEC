@@ -5,6 +5,7 @@ import org.app.server.enceypt.Encryption;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.app.client.tools.PasswordGenerator;
+import org.app.db.Logs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -146,10 +147,10 @@ public class BookedRoom {
                 root.put("data", dataArray);
             }
 
-
+            String userID = Encryption.encrypt(name,room,floor,days);
             LocalDate today = LocalDate.now();
             JSONObject newData = new JSONObject();
-            newData.put("ID", Encryption.encrypt(name,room,floor,days));
+            newData.put("ID", userID);
             newData.put("Password",PasswordGenerator.generatePassword(6));
             newData.put("Name",name);
             newData.put("Room",roomArray);
@@ -157,6 +158,9 @@ public class BookedRoom {
             newData.put("Expire date",today.plusDays(days));
 
             dataArray.put(newData);
+
+            Logs logs = new Logs();
+            logs.addToLogs("Admin","Add",userID,"SUCCESS");
 
             try(FileWriter writer = new FileWriter(FILE_PATH)){
                 writer.write(root.toString(2));

@@ -7,27 +7,34 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AdminInterface {
+    private Sidebar sidebar; // เก็บ reference ของ Sidebar
 
-    public JFrame app(){
+    public JFrame app() {
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(Color.WHITE);
 
+        // NavBar
         NavBar navBar = new NavBar();
-        JPanel nav = navBar.navbar();
+        JPanel nav = navBar.navbar(frame);
         nav.setBackground(Color.white);
-        frame.add(nav,BorderLayout.EAST);
+        frame.add(nav, BorderLayout.EAST);
 
-        Sidebar sidebar = new Sidebar();
-        frame.add(sidebar.sidebar(frame),BorderLayout.WEST);
+        // สร้าง Sidebar และเพิ่มลงใน JFrame
+        sidebar = new Sidebar(frame);
+        frame.add(sidebar.getSidebar(), BorderLayout.WEST);
 
         /*
         InfoDisplay infoDisplay = new InfoDisplay();
         frame.add(infoDisplay.infoDisplay());
-*/
+        */
+
+        frame.revalidate();
+        frame.repaint();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.pack();
+
         return frame;
     }
 
@@ -35,6 +42,4 @@ public class AdminInterface {
         AdminInterface run = new AdminInterface();
         run.app();
     }
-
-
 }
