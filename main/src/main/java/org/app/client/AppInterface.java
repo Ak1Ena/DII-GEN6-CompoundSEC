@@ -1,0 +1,102 @@
+package org.app.client;
+
+import org.app.db.Logs;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class AppInterface {
+
+    private JDialog adminLogin(JFrame parentFrame) {
+        Logs logs = new Logs();
+        JDialog loginDialog = new JDialog(parentFrame, "Admin Login", true);
+        loginDialog.setSize(300, 200);
+        loginDialog.setLocationRelativeTo(parentFrame); // ให้แสดงกลางจอ
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new GridLayout(3, 1));
+
+        JLabel userLabel = new JLabel("Username:");
+        JTextField userField = new JTextField();
+        JLabel passwordLabel = new JLabel("Password:");
+        JPasswordField passwordField = new JPasswordField();
+
+        JButton loginButton = new JButton("Login");
+        loginButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String username = userField.getText();
+                String password = new String(passwordField.getPassword());
+
+                if (username.equals("admin") && password.equals("admin123")) {
+                    logs.addToLogs("Admin","LOGIN","","SUCCESS");
+                    JOptionPane.showMessageDialog(loginDialog, "Login Success!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    loginDialog.dispose();
+
+                    parentFrame.dispose();
+                    AdminInterface adminInterface = new AdminInterface();
+                    adminInterface.app();
+                } else {
+                    logs.addToLogs("Admin","LOGIN","","DENIED");
+                    JOptionPane.showMessageDialog(loginDialog, "Invalid username or password.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        panel.add(userLabel);
+        panel.add(userField);
+        panel.add(passwordLabel);
+        panel.add(passwordField);
+        panel.add(loginButton);
+
+        loginDialog.add(panel);
+        loginDialog.setVisible(true);
+
+        return loginDialog;
+    }
+
+    public JFrame run() {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        JButton user = new JButton("USER");
+        user.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserInterface userInterface = new UserInterface();
+                userInterface.run();
+                frame.dispose();
+            }
+        });
+
+        JButton admin = new JButton("Admin");
+        admin.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                adminLogin(frame);
+            }
+        });
+
+        frame.add(user);
+        frame.add(admin);
+
+        frame.setSize(400, 200);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+
+        return frame;
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                AppInterface appInterface = new AppInterface();
+                appInterface.run();
+            }
+        });
+    }
+}

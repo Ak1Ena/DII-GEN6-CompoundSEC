@@ -2,6 +2,7 @@ package org.app.client;
 
 import org.app.client.layout.Sidebar;
 import org.app.client.layout.NavBar;
+import org.app.db.Logs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,6 +11,7 @@ public class AdminInterface {
     private Sidebar sidebar; // เก็บ reference ของ Sidebar
 
     public JFrame app() {
+        Logs logs = new Logs();
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(Color.WHITE);
@@ -24,10 +26,16 @@ public class AdminInterface {
         sidebar = new Sidebar(frame);
         frame.add(sidebar.getSidebar(), BorderLayout.WEST);
 
-        /*
-        InfoDisplay infoDisplay = new InfoDisplay();
-        frame.add(infoDisplay.infoDisplay());
-        */
+        // ปุ่มย้อนกลับไปหน้า AppInterface
+        JButton backButton = new JButton("Back to AppInterface");
+        backButton.addActionListener(e -> {
+            logs.addToLogs("Admin","LOGOUT","","SUCCESS");
+            AppInterface appInterface = new AppInterface();
+            appInterface.run();
+            frame.dispose(); // ปิดหน้าจอ AdminInterface
+        });
+
+        frame.add(backButton, BorderLayout.SOUTH); // เพิ่มปุ่มในตำแหน่งใต้สุดของ frame
 
         frame.revalidate();
         frame.repaint();
@@ -38,8 +46,4 @@ public class AdminInterface {
         return frame;
     }
 
-    public static void main(String[] args) {
-        AdminInterface run = new AdminInterface();
-        run.app();
-    }
 }

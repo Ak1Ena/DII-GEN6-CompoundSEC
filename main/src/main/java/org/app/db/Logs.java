@@ -25,9 +25,4 @@ public class Logs {
         }
     }
 
-
-    public static void main(String[] args) {
-        Logs logs = new Logs();
-        logs.addToLogs("Admin", "Add", "sadfksadl;fksad'f", "SUCCESS");
-    }
 }

@@ -55,16 +55,4 @@ public class LogViewer extends JDialog {
         return logList;
     }
 
-    public static void main(String[] args) {
-        // เรียก LogViewer ในรูปแบบ JDialog
-        SwingUtilities.invokeLater(() -> {
-            JFrame parentFrame = new JFrame();  // สร้าง JFrame เป็น parent
-            parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            parentFrame.setSize(200, 200); // ขนาดเล็ก ๆ ของ parent frame
-            parentFrame.setVisible(true);
-
-            LogViewer logViewer = new LogViewer(parentFrame); // ส่ง parent JFrame ให้กับ LogViewer
-            logViewer.setVisible(true); // แสดง LogViewer (JDialog)
-        });
-    }
 }

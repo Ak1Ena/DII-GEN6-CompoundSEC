@@ -9,7 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class Sidebar {
-    private JPanel sidebar; 
+    private JPanel sidebar;
     private JFrame frame;
 
     public Sidebar(JFrame frame) {

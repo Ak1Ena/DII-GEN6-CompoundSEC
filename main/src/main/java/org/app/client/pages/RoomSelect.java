@@ -1,5 +1,6 @@
 package org.app.client.pages;
 
+import org.app.client.AppInterface;
 import org.app.client.UserInterface;
 import org.app.client.tools.AccessCheck;
 import org.app.db.Logs;
@@ -40,8 +41,8 @@ public class RoomSelect {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (accessCheck.checkUserRoom((String) roomComboBox.getSelectedItem())){
-                    UserInterface userInterface = new UserInterface();
-                    userInterface.run();
+                    AppInterface appInterface = new AppInterface();
+                    appInterface.run();
                     logs.addToLogs("User","Access ROOM "+(String) roomComboBox.getSelectedItem(),accessCheck.getUserID(),"SUCCESS");
 
                     frame.dispose();

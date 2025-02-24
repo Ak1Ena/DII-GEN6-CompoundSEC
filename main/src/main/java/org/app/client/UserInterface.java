@@ -60,9 +60,5 @@ public class UserInterface {
         return frame;
     }
 
-    public static void main(String[] args) {
-        UserInterface run = new UserInterface();
-        run.run();
-    }
 
 }
