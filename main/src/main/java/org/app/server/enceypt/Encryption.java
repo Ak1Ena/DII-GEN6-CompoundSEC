@@ -1,37 +1,19 @@
 package org.app.server.enceypt;
 
 import java.util.Base64;
-/*
-public class Encryption {
-    public static String encrypt(String name, String[] rooms, String floor, int days) {
-        String roomData = String.join(",", rooms);
-        String data = name + "-" + roomData + "-" + floor + "-" + days + "-";
-        return Base64.getUrlEncoder().encodeToString(data.getBytes());
-    }
-
-    public static String[] decrypt(String encryptedData) {
-        String decodedData = new String(Base64.getDecoder().decode(encryptedData));
-        String[] parts = decodedData.split("-");
-        String[] result = new String[4];
-        for (int i = 0; i < 4; i++) {
-            result[i] = parts[i];
-        }
-        return result;
-    }
-}
-
- */
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Encryption {
     public static String encrypt(String name, String[] rooms, String floor, int days) {
         String roomData = String.join(",", rooms);
-        String data = name + "-" + roomData + "-" + floor + "-" + days + "-";
-
-        // ใช้ Base64 URL-safe encoding แล้วตัดบางส่วนเพื่อให้ข้อมูลสั้นลง
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String timestamp = now.format(formatter);
+        String data = name + "-" + roomData + "-" + floor + "-" + days + "-" + timestamp;
         String encodedData = Base64.getUrlEncoder().encodeToString(data.getBytes());
 
-        // ตัดข้อมูลที่เกินความจำเป็นออก
-        return encodedData.substring(0, 22);  // ตัดเป็นความยาวสั้นๆ
+        return encodedData.substring(0, 22);
     }
 
     public static String[] decrypt(String encryptedData) {
@@ -40,13 +22,10 @@ public class Encryption {
         String decodedData = new String(Base64.getUrlDecoder().decode(fullData));
 
         String[] parts = decodedData.split("-");
-        String[] result = new String[4];
-        for (int i = 0; i < 4; i++) {
+        String[] result = new String[5];
+        for (int i = 0; i < 5; i++) {
             result[i] = parts[i];
         }
         return result;
     }
 }
-
-
-
