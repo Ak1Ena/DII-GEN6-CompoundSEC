@@ -10,88 +10,40 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class FloorSelect {
+    // 🔒 อินสแตนซ์เดียวของคลาสนี้
+    private static FloorSelect instance;
 
     private RoomSelect roomSelect;
     private AccessCheck accessCheck;
 
+    private FloorSelect() {
+        try {
+            accessCheck = new AccessCheck();
+        } catch (IOException e) {
+            throw new RuntimeException("Error loading access data", e);
+        }
+        roomSelect = RoomSelect.getInstance();
+    }
+
+    // ✅ ฟังก์ชันเรียกใช้งานอินสแตนซ์เดียว
+    public static FloorSelect getInstance() {
+        if (instance == null) {
+            instance = new FloorSelect();
+        }
+        return instance;
+    }
+
+    // 🚀 สร้างและแสดงผล UI
     public JFrame run() {
         Logs logs = new Logs();
         JFrame frame = new JFrame("Floor Selector");
         frame.setSize(500, 250);
         frame.setLayout(new FlowLayout(5, 6, 2));
 
-        try {
-            accessCheck = new AccessCheck(); // Create AccessCheck once
-        } catch (IOException e) {
-            throw new RuntimeException("Error loading access data", e);
-        }
-
-        roomSelect = new RoomSelect(); // Initialize roomSelect here
-
-        JButton low = new JButton("Low");
-        low.setPreferredSize(new Dimension(155, frame.getHeight()));
-        low.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(low.getText());
-                if (accessCheck.checkUserFloor(low.getText())) {
-                    try {
-                        logs.addToLogs("User","Access LOW FLOOR",accessCheck.getUserID(),"SUCCESS");
-                        roomSelect.run(low.getText());
-                        frame.dispose();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
-                    logs.addToLogs("User","Access LOW FLOOR",accessCheck.getUserID(),"DENIED");
-                }
-            }
-        });
-
-        JButton medium = new JButton("Medium");
-        medium.setPreferredSize(new Dimension(155, frame.getHeight()));
-        medium.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(medium.getText());
-                if (accessCheck.checkUserFloor(medium.getText())) {
-                    try {
-                        roomSelect.run(medium.getText());
-                        logs.addToLogs("User","Access MEDIUM FLOOR",accessCheck.getUserID(),"SUCCESS");
-                        frame.dispose();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
-                    logs.addToLogs("User","Access MEDIUM FLOOR",accessCheck.getUserID(),"DENINE");
-
-                }
-            }
-        });
-
-        JButton high = new JButton("High");
-        high.setPreferredSize(new Dimension(155, frame.getHeight()));
-        high.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println(high.getText());
-                if (accessCheck.checkUserFloor(high.getText())) {
-                    try {
-                        roomSelect.run(high.getText());
-                        logs.addToLogs("User","Access HIGH FLOOR",accessCheck.getUserID(),"SUCCESS");
-                        frame.dispose();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(frame, "Denied", "Alert", JOptionPane.ERROR_MESSAGE);
-                    logs.addToLogs("User","Access HIGH FLOOR",accessCheck.getUserID(),"DENIED");
-
-                }
-            }
-        });
+        // 🔘 ปุ่มสำหรับชั้นต่าง ๆ
+        JButton low = createFloorButton("Low", logs, frame);
+        JButton medium = createFloorButton("Medium", logs, frame);
+        JButton high = createFloorButton("High", logs, frame);
 
         frame.add(low);
         frame.add(medium);
@@ -100,5 +52,32 @@ public class FloorSelect {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         return frame;
+    }
+
+    // 📌 สร้างปุ่มแต่ละชั้นพร้อมการทำงาน
+    private JButton createFloorButton(String floorName, Logs logs, JFrame frame) {
+        JButton button = new JButton(floorName);
+        button.setPreferredSize(new Dimension(155, frame.getHeight()));
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println(floorName);
+                if (accessCheck.checkUserFloor(floorName)) {
+                    try {
+                        logs.addToLogs("User", "Access " + floorName.toUpperCase() + " FLOOR", accessCheck.getUserID(), "SUCCESS");
+                        roomSelect.run(floorName);
+                        frame.dispose();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Access Denied", "Permission Error", JOptionPane.ERROR_MESSAGE);
+                    logs.addToLogs("User", "Access " + floorName.toUpperCase() + " FLOOR", accessCheck.getUserID(), "DENIED");
+                }
+            }
+        });
+
+        return button;
     }
 }

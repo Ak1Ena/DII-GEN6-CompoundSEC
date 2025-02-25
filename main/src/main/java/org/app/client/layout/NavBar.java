@@ -14,8 +14,6 @@ public class NavBar {
         navbar.setLayout(new GridLayout(3, 1, 0, 20)); // 3 แถว 1 คอลัมน์, มีช่องว่าง 20px ระหว่างปุ่ม
 
         navbar.add(logs(frame));
-        navbar.add(floor_menagement());
-        navbar.add(user());
 
         navbar.setBorder(new MatteBorder(0,20,0,20,Color.white));
 
@@ -37,7 +35,7 @@ public class NavBar {
         toLogs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                LogViewer logViewer = new LogViewer(frame);
+                LogViewer logViewer = LogViewer.getInstance(frame);
                 logViewer.setVisible(true);
             }
         });

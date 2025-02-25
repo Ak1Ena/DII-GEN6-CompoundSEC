@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Logs {
-    private final String LOG_PATH = "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\Logs.txt";
+    private final String LOG_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\Logs.txt";
 
     public void addToLogs(String position, String operator, String userID, String status) {
         LocalDateTime currentTime = LocalDateTime.now();

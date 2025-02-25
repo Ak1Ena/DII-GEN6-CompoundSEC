@@ -1,5 +1,6 @@
 package org.app;
 import org.app.client.AppInterface;
+import org.app.db.BookedRoom;
 
 import javax.swing.*;
 

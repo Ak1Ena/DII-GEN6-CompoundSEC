@@ -1,5 +1,6 @@
 package org.app.client;
 
+import org.app.db.BookedRoom;
 import org.app.db.Logs;
 
 import javax.swing.*;
@@ -8,6 +9,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class AppInterface {
+    private final String DB_FILEPATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
+
+    public AppInterface(){
+        BookedRoom bookedRoom = new BookedRoom();
+        bookedRoom.removeExpiredData(DB_FILEPATH);
+    }
 
     private JDialog adminLogin(JFrame parentFrame) {
         Logs logs = new Logs();
@@ -36,7 +43,7 @@ public class AppInterface {
                     loginDialog.dispose();
 
                     parentFrame.dispose();
-                    AdminInterface adminInterface = new AdminInterface();
+                    AdminInterface adminInterface = AdminInterface.getInstance();
                     adminInterface.app();
                 } else {
                     logs.addToLogs("Admin","LOGIN","","DENIED");
@@ -66,7 +73,7 @@ public class AppInterface {
         user.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                UserInterface userInterface = new UserInterface();
+                UserInterface userInterface = UserInterface.getInstance();
                 userInterface.run();
                 frame.dispose();
             }

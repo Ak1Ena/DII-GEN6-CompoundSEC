@@ -2,7 +2,6 @@ package org.app.client.pages;
 
 import org.app.db.BookedRoom;
 import org.app.server.tools.JSONWriter;
-import org.app.server.enceypt.Encryption;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +11,10 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 
 public class AddLayout {
-    private String[] data;
+
+    private final String DB_FILEPATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
+    private final String BR_FILEPATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json";
+
     private BookedRoom bookedRoom;
     private JPanel tableContainer;
     public JDialog add_display(JFrame parent) {
@@ -60,13 +62,13 @@ public class AddLayout {
                 JOptionPane.showMessageDialog(addDialog,"Submitted!");
                 for (int i = 0; i < bookedRoom.getData().length; i++) {
                     if (bookedRoom.getData()[i] != null) {
-                        jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json");
+                        jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], BR_FILEPATH);
                     }else {
                         break;
                     }
                 }
                 try {
-                    bookedRoom.addData(nameField.getText(), bookedRoom.getData(), (String) floorSelect.getSelectedItem(),Integer.parseInt(numberField.getText()),"C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json");
+                    bookedRoom.addData(nameField.getText(), bookedRoom.getData(), (String) floorSelect.getSelectedItem(),Integer.parseInt(numberField.getText()),DB_FILEPATH);
                 }catch (NumberFormatException exception){
                     System.out.println(exception);
                 }

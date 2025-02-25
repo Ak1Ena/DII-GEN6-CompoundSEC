@@ -20,8 +20,8 @@ import java.util.List;
 
 public class UserSlideBar {
 
-    private static final String FILE_PATH = "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
-    private static final String BOOKED_ROOM_PATH = "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json";
+    private static final String FILE_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
+    private static final String BOOKED_ROOM_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json";
     private JPanel user;
     private List<JPanel> userCards;
 
@@ -29,6 +29,29 @@ public class UserSlideBar {
         user = new JPanel();
         user.setLayout(new BoxLayout(user, BoxLayout.Y_AXIS));
         userCards = new ArrayList<>();
+    }
+    public void filterUserCardsByRoom(String roomNumber) {
+        user.removeAll();  // เคลียร์การ์ดทั้งหมดก่อน
+        boolean found = false;
+
+        for (JPanel card : userCards) {
+            JLabel roomLabel = (JLabel) ((JPanel) card.getComponent(0)).getComponent(2); // ดึง JLabel ห้อง
+            String roomText = roomLabel.getText();
+
+            if (roomText.contains(roomNumber)) {
+                user.add(card); // เพิ่มการ์ดที่ตรงกับเลขห้อง
+                found = true;
+            }
+        }
+
+        if (!found) {
+            JPanel notFoundPanel = new JPanel();
+            notFoundPanel.add(new JLabel("Room not found!"));
+            user.add(notFoundPanel);
+        }
+
+        user.revalidate();
+        user.repaint();
     }
 
     public JScrollPane userSlideBar() {

@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 public class AccessCheck {
 
-    private final String FILE_PATH = "C:\\Users\\User\\Desktop\\DII-GEN6-CompoundSEC\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
+    private final String FILE_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
     private static JSONArray data;
     private static int userID;
 

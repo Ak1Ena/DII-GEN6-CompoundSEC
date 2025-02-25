@@ -11,6 +11,8 @@ import java.awt.event.ActionListener;
 public class Sidebar {
     private JPanel sidebar;
     private JFrame frame;
+    private JTextField searchField;
+    private UserSlideBar slideBar;
 
     public Sidebar(JFrame frame) {
         this.frame = frame;
@@ -30,13 +32,32 @@ public class Sidebar {
     private void setupSidebar() {
         sidebar.removeAll();
 
-        Add addButton = new Add();
-        sidebar.add(addButton.add(frame), BorderLayout.NORTH);
+        // Top Panel: Add button + Search bar
+        JPanel topPanel = new JPanel(new BorderLayout());
 
-        UserSlideBar slideBar = new UserSlideBar();
+        // Add Button
+        Add addButton = new Add();
+        topPanel.add(addButton.add(frame), BorderLayout.WEST);
+
+        // Search Panel
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        searchField = new JTextField();
+        JButton searchButton = new JButton("Search");
+
+        searchButton.addActionListener(e -> searchRoom());
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
+
+        topPanel.add(searchPanel, BorderLayout.CENTER);
+
+        sidebar.add(topPanel, BorderLayout.NORTH);
+
+        // UserSlideBar
+        slideBar = new UserSlideBar();
         slideBar.addUserCardsFromJson();
         sidebar.add(slideBar.userSlideBar(), BorderLayout.CENTER);
 
+        // Refresh Button
         JButton refreshButton = new JButton("Refresh");
         refreshButton.addActionListener(new ActionListener() {
             @Override
@@ -50,9 +71,21 @@ public class Sidebar {
         sidebar.repaint();
     }
 
+    // Function for Searching by Room Number
+    private void searchRoom() {
+        String roomNumber = searchField.getText().trim();
+        if (!roomNumber.isEmpty()) {
+            slideBar.filterUserCardsByRoom(roomNumber); // Call the filtering method
+        } else {
+            slideBar.addUserCardsFromJson(); // Reload all cards if search field is empty
+        }
+        sidebar.revalidate();
+        sidebar.repaint();
+    }
+
     public void refreshSidebar() {
         SwingUtilities.invokeLater(() -> {
-            setupSidebar(); // โหลดข้อมูลใหม่
+            setupSidebar(); // Reload all data
             System.out.println("Sidebar updated!"); // Debugging log
         });
     }
