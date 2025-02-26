@@ -103,7 +103,7 @@ public class UserSlideBar {
             try {
                 String updatedName = nameField.getText();
                 int dayToAdd = Integer.parseInt(expireDateField.getText());
-            if (dayToAdd >= 0) {
+            if (dayToAdd >= 0 & !updatedName.isEmpty()) {
                 LocalDate currentDate = LocalDate.now();
                 LocalDate modifyExpireDate = currentDate.plusDays(dayToAdd);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
