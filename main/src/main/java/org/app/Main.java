@@ -10,7 +10,7 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                AppInterface appInterface = new AppInterface();
+                AppInterface appInterface = AppInterface.getInstance();
                 appInterface.run();
             }
         });

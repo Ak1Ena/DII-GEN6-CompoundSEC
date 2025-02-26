@@ -8,10 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class AdminInterface {
-    private static AdminInterface instance;  // Static instance of AdminInterface
-    private Sidebar sidebar; // Keep reference of Sidebar
-
-    // Public method to provide access to the instance (Singleton)
+    private static AdminInterface instance;
+    private Sidebar sidebar;
     public static AdminInterface getInstance() {
         if (instance == null) {
             synchronized (AdminInterface.class) {
@@ -43,7 +41,7 @@ public class AdminInterface {
         JButton backButton = new JButton("Back to AppInterface");
         backButton.addActionListener(e -> {
             logs.addToLogs("Admin", "LOGOUT", "", "SUCCESS");
-            AppInterface appInterface = new AppInterface();
+            AppInterface appInterface = AppInterface.getInstance();
             appInterface.run();
             frame.dispose(); // Close AdminInterface
         });

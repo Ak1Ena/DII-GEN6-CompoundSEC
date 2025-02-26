@@ -51,7 +51,7 @@ public class RoomSelect {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (accessCheck.checkUserRoom((String) roomComboBox.getSelectedItem())) {
-                    AppInterface appInterface = new AppInterface();
+                    AppInterface appInterface = AppInterface.getInstance();
                     appInterface.run();
                     logs.addToLogs("User", "Access ROOM " + (String) roomComboBox.getSelectedItem(), accessCheck.getUserID(), "SUCCESS");
 

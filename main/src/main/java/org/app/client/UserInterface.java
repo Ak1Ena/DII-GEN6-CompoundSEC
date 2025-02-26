@@ -58,8 +58,20 @@ public class UserInterface {
                 }
             }
         });
+        JButton cancel = new JButton("Cancel");
+        cancel.setPreferredSize(new Dimension(frame.getWidth() - 20, 40));
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                AppInterface appInterface = AppInterface.getInstance();
+                appInterface.run();
+                frame.dispose();
+            }
+        });
+
 
         frame.add(login);
+        frame.add(cancel);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);

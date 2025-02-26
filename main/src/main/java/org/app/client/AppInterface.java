@@ -10,10 +10,18 @@ import java.awt.event.ActionListener;
 
 public class AppInterface {
     private final String DB_FILEPATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
+    private static AppInterface instance;
 
-    public AppInterface(){
+    private AppInterface(){
         BookedRoom bookedRoom = new BookedRoom();
         bookedRoom.removeExpiredData(DB_FILEPATH);
+    }
+
+    public static AppInterface getInstance() {
+        if (instance == null) {
+            instance = new AppInterface();
+        }
+        return instance;
     }
 
     private JDialog adminLogin(JFrame parentFrame) {
@@ -96,5 +104,4 @@ public class AppInterface {
 
         return frame;
     }
-
 }
