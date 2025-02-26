@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserSlideBar {
-
+    private Logs logs = Logs.getInstance();
     private static final String FILE_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
     private static final String BOOKED_ROOM_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json";
     private JPanel user;
@@ -100,25 +100,35 @@ public class UserSlideBar {
         cancelButton.addActionListener(e -> dialog.dispose());
 
         saveButton.addActionListener(e -> {
-            String updatedName = nameField.getText();
-            int dayToAdd = Integer.parseInt(expireDateField.getText());
-            LocalDate currentDate = LocalDate.now();
-            LocalDate modifyExpireDate = currentDate.plusDays(dayToAdd);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            try {
+                String updatedName = nameField.getText();
+                int dayToAdd = Integer.parseInt(expireDateField.getText());
+            if (dayToAdd >= 0) {
+                LocalDate currentDate = LocalDate.now();
+                LocalDate modifyExpireDate = currentDate.plusDays(dayToAdd);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
-            String updatedExpireDate = modifyExpireDate.format(formatter);
-            String userId = (String) card.getClientProperty("ID");
+                String updatedExpireDate = modifyExpireDate.format(formatter);
+                String userId = (String) card.getClientProperty("ID");
 
-            user.remove(card);
-            userCards.remove(card);
-            addUserCard(updatedName, floor, rooms, userId);
+                user.remove(card);
+                userCards.remove(card);
+                addUserCard(updatedName, floor, rooms, userId);
 
-            updateUserInJson(userId, updatedName, rooms, updatedExpireDate);
-            user.revalidate();
-            user.repaint();
+                updateUserInJson(userId, updatedName, rooms, updatedExpireDate);
+                user.revalidate();
+                user.repaint();
 
-            dialog.dispose();
+                dialog.dispose();
+            }else {
+                JOptionPane.showMessageDialog(dialog, "Please enter correctly!", "Error", JOptionPane.ERROR_MESSAGE);
+
+            }
+            }catch (NumberFormatException exception){
+                JOptionPane.showMessageDialog(dialog, "Please enter correctly!", "Error", JOptionPane.ERROR_MESSAGE);
+
+            }
         });
 
         dialog.setLocationRelativeTo(card);
@@ -158,7 +168,7 @@ public class UserSlideBar {
             Files.write(Paths.get(FILE_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
 
             System.out.println("User with ID: " + userId + " updated successfully!");
-            Logs logs = new Logs();
+            Logs logs = Logs.getInstance();
             logs.addToLogs("Admin","Modify",userId,"SUCCESS");
         } catch (IOException | org.json.JSONException e) {
             e.printStackTrace();
@@ -241,7 +251,7 @@ public class UserSlideBar {
 
             jsonObj.put("data", dataArray);
             Files.write(Paths.get(FILE_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
-            Logs logs = new Logs();
+            Logs logs = Logs.getInstance();
             logs.addToLogs("Admin","Revoke",userId,"SUCCESS");
             System.out.println("User with ID: " + userId + " removed successfully!");
         } catch (IOException e) {

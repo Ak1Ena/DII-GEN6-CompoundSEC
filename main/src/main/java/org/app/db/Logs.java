@@ -1,5 +1,7 @@
 package org.app.db;
 
+import org.app.client.AdminInterface;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,7 +9,20 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class Logs {
+    private static Logs instance;
     private final String LOG_PATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\Logs.txt";
+
+    public static Logs getInstance(){
+        if (instance == null) {
+            synchronized (Logs.class) {
+                if (instance == null) {
+                    instance = new Logs();
+                }
+            }
+        }
+        return instance;
+    };
+    private Logs(){};
 
     public void addToLogs(String position, String operator, String userID, String status) {
         LocalDateTime currentTime = LocalDateTime.now();

@@ -18,7 +18,7 @@ public class Sidebar {
         this.frame = frame;
         this.sidebar = new JPanel();
         sidebar.setPreferredSize(new Dimension(500, Frame.MAXIMIZED_VERT));
-        sidebar.setBackground(Color.red);
+        sidebar.setBackground(Color.WHITE);
         sidebar.setLayout(new BorderLayout());
         sidebar.setBorder(BorderFactory.createLineBorder(Color.white, 20));
 

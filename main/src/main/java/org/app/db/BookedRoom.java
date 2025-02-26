@@ -108,18 +108,21 @@ public class BookedRoom {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (label.isSelected()) {
+                            // ถ้าเลือกห้องอยู่แล้ว ให้ยกเลิกการเลือก
                             label.setBackground(Color.LIGHT_GRAY);
                             label.setSelected(false);
                             label.setData("");
+                            // ลบข้อมูลห้องที่ถูกเลือกออกจากตัวแปร data
+                            removeSelectedRoom(label.getText());
                         } else {
-                            label.setBackground(Color.WHITE);
-                            label.setForeground(Color.GREEN);
+                            // ถ้ายังไม่ถูกเลือก ให้เลือกห้อง
+                            label.setBackground(Color.GRAY);
                             label.setSelected(true);
                             label.setData("Selected");
+                            // เพิ่มข้อมูลห้องที่ถูกเลือกเข้าไปในตัวแปร data
+                            addSelectedRoom(label.getText());
                         }
                         System.out.println("Label Name: " + label.getText());
-                        data[j] = label.getText();
-                        j++;
                     }
                 });
             }
@@ -129,6 +132,30 @@ public class BookedRoom {
         }
 
         return table;
+    }
+
+    // ฟังก์ชันสำหรับเพิ่มห้องที่ถูกเลือกลงใน data
+    private void addSelectedRoom(String room) {
+        // เช็คว่า data เต็มหรือไม่ ก่อนที่จะเพิ่มห้อง
+        if (j < data.length) {
+            data[j] = room;
+            j++;
+        }
+    }
+
+    // ฟังก์ชันสำหรับลบห้องที่ถูกเลือกออกจาก data
+    private void removeSelectedRoom(String room) {
+        for (int i = 0; i < j; i++) {
+            if (data[i].equals(room)) {
+                // เมื่อพบห้องที่เลือกไว้ ให้ย้ายข้อมูลที่เหลือมาทางซ้าย
+                for (int k = i; k < j - 1; k++) {
+                    data[k] = data[k + 1];
+                }
+                data[j - 1] = null; // ลบห้องสุดท้าย
+                j--; // ลดจำนวนห้องที่เลือก
+                break;
+            }
+        }
     }
 
     public String[] getData() {
@@ -171,7 +198,7 @@ public class BookedRoom {
 
             dataArray.put(newData);
 
-            Logs logs = new Logs();
+            Logs logs = Logs.getInstance();
             logs.addToLogs("Admin", "Add", userID, "SUCCESS");
 
             try (FileWriter writer = new FileWriter(FILE_PATH)) {
@@ -184,6 +211,7 @@ public class BookedRoom {
             e.printStackTrace();
         }
     }
+
     public void removeExpiredData(String filePath) {
         try {
             File file = new File(filePath);
@@ -247,10 +275,8 @@ public class BookedRoom {
         }
     }
 
-
     public void setData(String[] data) {
         j = 0;
         this.data = data;
     }
-
 }

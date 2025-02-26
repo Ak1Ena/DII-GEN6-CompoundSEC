@@ -25,7 +25,7 @@ public class AdminInterface {
     }
 
     public JFrame app() {
-        Logs logs = new Logs();
+        Logs logs = Logs.getInstance();
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
         frame.getContentPane().setBackground(Color.WHITE);

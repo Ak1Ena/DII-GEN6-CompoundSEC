@@ -17,7 +17,7 @@ public class AppInterface {
     }
 
     private JDialog adminLogin(JFrame parentFrame) {
-        Logs logs = new Logs();
+        Logs logs = Logs.getInstance();
         JDialog loginDialog = new JDialog(parentFrame, "Admin Login", true);
         loginDialog.setSize(300, 200);
         loginDialog.setLocationRelativeTo(parentFrame); // ให้แสดงกลางจอ

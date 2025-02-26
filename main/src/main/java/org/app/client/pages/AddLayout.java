@@ -8,7 +8,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
-import java.util.Arrays;
 
 public class AddLayout {
 
@@ -17,6 +16,7 @@ public class AddLayout {
 
     private BookedRoom bookedRoom;
     private JPanel tableContainer;
+
     public JDialog add_display(JFrame parent) {
         JDialog addDialog = new JDialog(parent, "Add Management", true);
         addDialog.setLayout(new GridBagLayout());
@@ -33,51 +33,12 @@ public class AddLayout {
 
         JTextField nameField = new JTextField(20);
         JComboBox<String> floorSelect = new JComboBox<>(new String[]{"Low", "Medium", "High"});
-
         NumberFormat numberFormat = NumberFormat.getIntegerInstance();
         JFormattedTextField numberField = new JFormattedTextField(numberFormat);
         numberField.setColumns(10);
 
-
-        floorSelect.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tableContainer.removeAll();
-                bookedRoom = new BookedRoom((String) floorSelect.getSelectedItem()); // เปลี่ยนค่าตัวแปรระดับคลาส
-                JPanel table = bookedRoom.getTable((String) floorSelect.getSelectedItem());
-                tableContainer.add(table, BorderLayout.CENTER);
-                tableContainer.revalidate();
-                tableContainer.repaint();
-            }
-        });
-
-
-
-        //save button
         JButton saveButton = new JButton("Save");
-        saveButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JSONWriter jsonWriter = new JSONWriter();
-                JOptionPane.showMessageDialog(addDialog,"Submitted!");
-                for (int i = 0; i < bookedRoom.getData().length; i++) {
-                    if (bookedRoom.getData()[i] != null) {
-                        jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], BR_FILEPATH);
-                    }else {
-                        break;
-                    }
-                }
-                try {
-                    bookedRoom.addData(nameField.getText(), bookedRoom.getData(), (String) floorSelect.getSelectedItem(),Integer.parseInt(numberField.getText()),DB_FILEPATH);
-                }catch (NumberFormatException exception){
-                    System.out.println(exception);
-                }
-                addDialog.setVisible(false);
-            }
-        });
-
-        bookedRoom = new BookedRoom("Low");
-        tableContainer = new JPanel(new BorderLayout());
+        saveButton.setEnabled(false); // ปิดใช้งานปุ่มตอนแรก
 
         floorSelect.addActionListener(new ActionListener() {
             @Override
@@ -88,21 +49,40 @@ public class AddLayout {
                 tableContainer.add(table, BorderLayout.CENTER);
                 tableContainer.revalidate();
                 tableContainer.repaint();
+                saveButton.setEnabled(true); // เปิดใช้งานปุ่มเมื่อเลือกชั้นแล้ว
             }
         });
 
-        //cancel button
-        JButton cancelButton = new JButton("Cancel");
-        cancelButton.addActionListener(new ActionListener() {
+        saveButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                addDialog.setVisible(false);
+                if (nameField.getText().isEmpty() || numberField.getText().isEmpty() || Integer.parseInt(numberField.getText()) <= 0) {
+                    JOptionPane.showMessageDialog(addDialog, "Please enter correctly!", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JSONWriter jsonWriter = new JSONWriter();
+                    JOptionPane.showMessageDialog(addDialog, "Submitted!");
+                    for (int i = 0; i < bookedRoom.getData().length; i++) {
+                        if (bookedRoom.getData()[i] != null) {
+                            jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], BR_FILEPATH);
+                        } else {
+                            break;
+                        }
+                    }
+                    try {
+                        bookedRoom.addData(nameField.getText(), bookedRoom.getData(), (String) floorSelect.getSelectedItem(), Integer.parseInt(numberField.getText()), DB_FILEPATH);
+                    } catch (NumberFormatException exception) {
+                        System.out.println(exception);
+                    }
+                    addDialog.setVisible(false);
+                }
             }
         });
 
-        // Panel สำหรับแสดงตาราง
+        JButton cancelButton = new JButton("Cancel");
+        cancelButton.addActionListener(e -> addDialog.setVisible(false));
 
-        // จัดเรียง Components ใน Layout
+        tableContainer = new JPanel(new BorderLayout());
+
         addDialog.add(new JLabel("Name:"), gbc);
         gbc.gridy++;
         addDialog.add(nameField, gbc);
@@ -115,12 +95,7 @@ public class AddLayout {
         gbc.gridy++;
         addDialog.add(floorSelect, gbc);
         gbc.gridy++;
-
-        // ตำแหน่งของ tableContainer (อยู่ใต้ JComboBox)
-        gbc.gridy++;
         addDialog.add(tableContainer, gbc);
-
-        // ปุ่ม Save / Cancel
         gbc.gridy++;
         gbc.gridwidth = 1;
         addDialog.add(saveButton, gbc);
@@ -128,8 +103,6 @@ public class AddLayout {
         addDialog.add(cancelButton, gbc);
 
         addDialog.setVisible(true);
-
         return addDialog;
     }
-
 }

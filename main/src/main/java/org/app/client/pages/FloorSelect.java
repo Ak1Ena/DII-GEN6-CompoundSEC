@@ -35,7 +35,7 @@ public class FloorSelect {
 
     // 🚀 สร้างและแสดงผล UI
     public JFrame run() {
-        Logs logs = new Logs();
+        Logs logs = Logs.getInstance();
         JFrame frame = new JFrame("Floor Selector");
         frame.setSize(500, 250);
         frame.setLayout(new FlowLayout(5, 6, 2));
