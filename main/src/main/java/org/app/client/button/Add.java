@@ -13,7 +13,7 @@ public class Add {
         add.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                AddLayout addLayout = new AddLayout();
+                AddLayout addLayout = AddLayout.getInstance();
                 addLayout.add_display(frame);
             }
         });

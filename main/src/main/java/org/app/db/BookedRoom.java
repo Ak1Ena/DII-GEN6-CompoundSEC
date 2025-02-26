@@ -5,7 +5,6 @@ import org.app.server.enceypt.Encryption;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.app.client.tools.PasswordGenerator;
-import org.app.db.Logs;
 
 import javax.swing.*;
 import java.awt.*;
@@ -275,8 +274,4 @@ public class BookedRoom {
         }
     }
 
-    public void setData(String[] data) {
-        j = 0;
-        this.data = data;
-    }
 }

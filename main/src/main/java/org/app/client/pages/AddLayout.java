@@ -1,7 +1,7 @@
 package org.app.client.pages;
 
+
 import org.app.db.BookedRoom;
-import org.app.server.tools.JSONWriter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,12 +11,24 @@ import java.text.NumberFormat;
 
 public class AddLayout {
 
+    private static AddLayout instance;
     private final String DB_FILEPATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\ResidentDB.json";
     private final String BR_FILEPATH = System.getProperty("user.dir") + "\\main\\src\\main\\java\\org\\app\\db\\booked_rooms.json";
 
     private BookedRoom bookedRoom;
     private JPanel tableContainer;
 
+    public static AddLayout getInstance(){
+        if (instance == null) {
+            synchronized (AddLayout.class) {
+                if (instance == null) {
+                    instance = new AddLayout();
+                }
+            }
+        }
+        return instance;
+    }
+    private AddLayout(){}
     public JDialog add_display(JFrame parent) {
         JDialog addDialog = new JDialog(parent, "Add Management", true);
         addDialog.setLayout(new GridBagLayout());
@@ -59,15 +71,7 @@ public class AddLayout {
                 if (nameField.getText().isEmpty() || numberField.getText().isEmpty() || Integer.parseInt(numberField.getText()) <= 0) {
                     JOptionPane.showMessageDialog(addDialog, "Please enter correctly!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    JSONWriter jsonWriter = new JSONWriter();
                     JOptionPane.showMessageDialog(addDialog, "Submitted!");
-                    for (int i = 0; i < bookedRoom.getData().length; i++) {
-                        if (bookedRoom.getData()[i] != null) {
-                            jsonWriter.addRoom((String) floorSelect.getSelectedItem(), bookedRoom.getData()[i], BR_FILEPATH);
-                        } else {
-                            break;
-                        }
-                    }
                     try {
                         bookedRoom.addData(nameField.getText(), bookedRoom.getData(), (String) floorSelect.getSelectedItem(), Integer.parseInt(numberField.getText()), DB_FILEPATH);
                     } catch (NumberFormatException exception) {

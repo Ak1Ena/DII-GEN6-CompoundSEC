@@ -11,13 +11,10 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class RoomSelect {
-    // 🔒 อินสแตนซ์เดียวของคลาสนี้
     private static RoomSelect instance;
 
-    // ❌ ป้องกันการสร้างอินสแตนซ์จากภายนอก
     private RoomSelect() {}
 
-    // ✅ ฟังก์ชันเรียกใช้งานอินสแตนซ์เดียว
     public static RoomSelect getInstance() {
         if (instance == null) {
             instance = new RoomSelect();
@@ -25,7 +22,6 @@ public class RoomSelect {
         return instance;
     }
 
-    // 🚀 สร้างและแสดงผล UI
     public JFrame run(String floor) throws IOException {
         JFrame frame = new JFrame("Room Selector");
         frame.setSize(500, 250);
@@ -50,7 +46,7 @@ public class RoomSelect {
         });
 
         JButton access = new JButton("Access");
-        AccessCheck accessCheck = new AccessCheck();
+        AccessCheck accessCheck = AccessCheck.getInstance();
         access.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

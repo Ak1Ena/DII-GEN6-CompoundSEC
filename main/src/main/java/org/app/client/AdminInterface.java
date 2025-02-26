@@ -2,7 +2,6 @@ package org.app.client;
 
 import org.app.client.layout.Sidebar;
 import org.app.client.layout.NavBar;
-import org.app.db.BookedRoom;
 import org.app.db.Logs;
 
 import javax.swing.*;

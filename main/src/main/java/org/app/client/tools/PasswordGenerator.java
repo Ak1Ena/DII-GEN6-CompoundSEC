@@ -22,8 +22,4 @@ public class PasswordGenerator {
         return password.toString();
     }
 
-    public static void main(String[] args) {
-        // ทดสอบการสุ่มรหัสผ่าน
-        System.out.println(generatePassword(12));
-    }
 }

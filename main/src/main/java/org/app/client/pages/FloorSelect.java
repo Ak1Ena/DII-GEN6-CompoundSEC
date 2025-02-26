@@ -10,7 +10,6 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class FloorSelect {
-    // 🔒 อินสแตนซ์เดียวของคลาสนี้
     private static FloorSelect instance;
 
     private RoomSelect roomSelect;
@@ -18,14 +17,13 @@ public class FloorSelect {
 
     private FloorSelect() {
         try {
-            accessCheck = new AccessCheck();
+            accessCheck = AccessCheck.getInstance();
         } catch (IOException e) {
             throw new RuntimeException("Error loading access data", e);
         }
         roomSelect = RoomSelect.getInstance();
     }
 
-    // ✅ ฟังก์ชันเรียกใช้งานอินสแตนซ์เดียว
     public static FloorSelect getInstance() {
         if (instance == null) {
             instance = new FloorSelect();
@@ -33,7 +31,6 @@ public class FloorSelect {
         return instance;
     }
 
-    // 🚀 สร้างและแสดงผล UI
     public JFrame run() {
         Logs logs = Logs.getInstance();
         JFrame frame = new JFrame("Floor Selector");
@@ -54,7 +51,6 @@ public class FloorSelect {
         return frame;
     }
 
-    // 📌 สร้างปุ่มแต่ละชั้นพร้อมการทำงาน
     private JButton createFloorButton(String floorName, Logs logs, JFrame frame) {
         JButton button = new JButton(floorName);
         button.setPreferredSize(new Dimension(155, frame.getHeight()));

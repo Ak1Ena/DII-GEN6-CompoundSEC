@@ -1,10 +1,8 @@
 package org.app.client;
 
-import org.app.client.layout.NavBar;
-import org.app.client.layout.Sidebar;
 import org.app.client.pages.FloorSelect;
 import org.app.client.tools.AccessCheck;
-import org.app.db.BookedRoom;
+
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,16 +11,11 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class UserInterface {
-    // 🔒 อินสแตนซ์เดียวของคลาสนี้
     private static UserInterface instance;
-
     private JFrame frame;
-
-    // ❌ ป้องกันการสร้างอินสแตนซ์จากภายนอก (private constructor)
     private UserInterface() {
     }
 
-    // ✅ ฟังก์ชันเรียกใช้งานอินสแตนซ์เดียว (Singleton Accessor)
     public static UserInterface getInstance() {
         if (instance == null) {
             instance = new UserInterface();
@@ -30,7 +23,6 @@ public class UserInterface {
         return instance;
     }
 
-    // 🚀 สร้างและแสดงผล UI
     public JFrame run() {
         frame = new JFrame("User Login");
         frame.setLayout(new FlowLayout());
@@ -49,12 +41,11 @@ public class UserInterface {
         JButton login = new JButton("Login");
         login.setPreferredSize(new Dimension(frame.getWidth() - 20, 40));
 
-        // 🛡️ ตรวจสอบการเข้าสู่ระบบ
         login.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    AccessCheck accessCheck = new AccessCheck();
+                    AccessCheck accessCheck = AccessCheck.getInstance();
                     if (accessCheck.checkUser(username.getText(), psw.getText())) {
                         FloorSelect floorSelect = FloorSelect.getInstance();
                         floorSelect.run();

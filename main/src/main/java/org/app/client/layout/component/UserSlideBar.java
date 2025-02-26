@@ -291,11 +291,11 @@ public class UserSlideBar {
         }
     }
 
-    public static class DataWrapper {
+    class DataWrapper {
         List<FloorData> data;
     }
 
-    public static class FloorData {
+    class FloorData {
         String Name;
         String Floor;
         List<String> Room;
