@@ -9,13 +9,14 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.app.db.Logs;
+import org.app.server.enceypt.Encryption;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.google.gson.Gson;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class UserSlideBar {
@@ -62,22 +63,39 @@ public class UserSlideBar {
 
     public void addUserCardsFromJson() {
         try {
-            Gson gson = new Gson();
-            FileReader reader = new FileReader(FILE_PATH);
-            DataWrapper dataWrapper = gson.fromJson(reader, DataWrapper.class);
-            reader.close();
+            // Read the entire JSON file as a string
+            String jsonText = new String(Files.readAllBytes(Paths.get(FILE_PATH)), StandardCharsets.UTF_8);
+            JSONObject jsonObj = new JSONObject(jsonText);
 
-            addUserCards(dataWrapper.data);
+            // Ensure 'data' key exists
+            if (!jsonObj.has("data") || jsonObj.isNull("data")) {
+                System.out.println("Error: JSON does not contain 'data' key or it is null");
+                return;
+            }
+
+            // Get the data array from JSON
+            JSONArray dataArray = jsonObj.getJSONArray("data");
+
+            // Loop through the JSON array and add user cards
+            for (int i = 0; i < dataArray.length(); i++) {
+                JSONObject userObj = dataArray.getJSONObject(i);
+                String floor = userObj.optString("Floor");
+                JSONArray roomsArray = userObj.getJSONArray("Room");
+                List<String> rooms = new ArrayList<>();
+                for (int j = 0; j < roomsArray.length(); j++) {
+                    rooms.add(roomsArray.getString(j));
+                }
+                String id = userObj.optString("ID");
+
+                addUserCard(floor, rooms, id);
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (org.json.JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void addUserCards(List<FloorData> floorDataList) {
-        for (FloorData floorData : floorDataList) {
-            addUserCard(floorData.Name, floorData.Floor, floorData.Room, floorData.ID);
-        }
-    }
 
     private void modifyUser(JPanel card, String name, String floor, List<String> rooms) {
         JDialog dialog = new JDialog((JFrame) SwingUtilities.getWindowAncestor(card), "Modify User", true);
@@ -92,7 +110,7 @@ public class UserSlideBar {
 
         dialog.add(new JLabel("Name:"));
         dialog.add(nameField);
-        dialog.add(new JLabel("Days :"));
+        dialog.add(new JLabel("Expire Date (days or date):"));
         dialog.add(expireDateField);
         dialog.add(saveButton);
         dialog.add(cancelButton);
@@ -101,41 +119,57 @@ public class UserSlideBar {
 
         saveButton.addActionListener(e -> {
             try {
-                String updatedName = nameField.getText();
-                int dayToAdd = Integer.parseInt(expireDateField.getText());
-            if (dayToAdd >= 0 & !updatedName.isEmpty()) {
-                LocalDate currentDate = LocalDate.now();
-                LocalDate modifyExpireDate = currentDate.plusDays(dayToAdd);
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                String updatedName = nameField.getText().trim(); // ตัดช่องว่างที่ไม่จำเป็น
+                String expireDateText = expireDateField.getText().trim(); // ตัดช่องว่างที่ไม่จำเป็น
 
+                // ตรวจสอบว่าไม่ว่างเปล่า
+                if (updatedName.isEmpty() || expireDateText.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "Please enter both name and days.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return; // ป้องกันไม่ให้ทำการบันทึกข้อมูลหากกรอกข้อมูลไม่ครบ
+                }
 
-                String updatedExpireDate = modifyExpireDate.format(formatter);
-                String userId = (String) card.getClientProperty("ID");
+                // ตรวจสอบว่ามีตัวเลข
+                try {
+                    int dayToAdd = Integer.parseInt(expireDateText); // Parse the expire date input as an integer (number of days)
+                    if (dayToAdd < 0) {
+                        JOptionPane.showMessageDialog(dialog, "Days must be a positive number.", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
 
-                user.remove(card);
-                userCards.remove(card);
-                addUserCard(updatedName, floor, rooms, userId);
+                    LocalDate currentDate = LocalDate.now();
+                    LocalDate modifyExpireDate = currentDate.plusDays(dayToAdd); // Add the number of days to the current date
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                    String updatedExpireDate = modifyExpireDate.format(formatter);
 
-                updateUserInJson(userId, updatedName, rooms, updatedExpireDate);
-                user.revalidate();
-                user.repaint();
+                    String oldUserID = (String) card.getClientProperty("ID");
+                    String[] oldUserIdDecrypted = Encryption.decrypt(oldUserID);
+                    String userId = Encryption.encrypt(updatedName, new String[]{oldUserIdDecrypted[1]}, oldUserIdDecrypted[2], Integer.parseInt(oldUserIdDecrypted[3]) + dayToAdd);
 
-                dialog.dispose();
-            }else {
-                JOptionPane.showMessageDialog(dialog, "Please enter correctly!", "Error", JOptionPane.ERROR_MESSAGE);
+                    user.remove(card);
+                    userCards.remove(card);
+                    addUserCard(floor, rooms, userId);
 
-            }
-            }catch (NumberFormatException exception){
-                JOptionPane.showMessageDialog(dialog, "Please enter correctly!", "Error", JOptionPane.ERROR_MESSAGE);
+                    updateUserInJson(oldUserID, updatedName, rooms, updatedExpireDate, userId);
+                    user.revalidate();
+                    user.repaint();
 
+                    dialog.dispose();
+                } catch (NumberFormatException exception) {
+                    // หากไม่สามารถแปลงเป็นตัวเลขได้
+                    JOptionPane.showMessageDialog(dialog, "Please enter a valid number for the days.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception exception) {
+                exception.printStackTrace(); // เพิ่มบรรทัดนี้เพื่อตรวจสอบข้อผิดพลาด
             }
         });
+
 
         dialog.setLocationRelativeTo(card);
         dialog.setVisible(true);
     }
 
-    private void updateUserInJson(String userId, String updatedName, List<String> updatedRooms, String updatedExpireDate) {
+
+    private void updateUserInJson(String oldUserId, String updatedName, List<String> updatedRooms, String updatedExpireDate, String newID) {
         try {
             String jsonText = new String(Files.readAllBytes(Paths.get(FILE_PATH)), StandardCharsets.UTF_8);
             JSONObject jsonObj = new JSONObject(jsonText);
@@ -150,8 +184,8 @@ public class UserSlideBar {
 
             for (int i = 0; i < dataArray.length(); i++) {
                 JSONObject user = dataArray.getJSONObject(i);
-                if (user.optString("ID").equals(userId)) {
-                    user.put("Name", updatedName);
+                if (user.optString("ID").equals(oldUserId)) {
+                    user.put("ID", newID);
                     user.put("Room", new JSONArray(updatedRooms));
                     user.put("Expire date", updatedExpireDate);
                     updated = true;
@@ -160,22 +194,20 @@ public class UserSlideBar {
             }
 
             if (!updated) {
-                System.out.println("Error: User ID " + userId + " not found in the JSON file");
+                System.out.println("Error: User ID " + oldUserId + " not found in the JSON file");
                 return;
             }
 
             jsonObj.put("data", dataArray);
             Files.write(Paths.get(FILE_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
 
-            System.out.println("User with ID: " + userId + " updated successfully!");
             Logs logs = Logs.getInstance();
-            logs.addToLogs("Admin","Modify",userId,"SUCCESS");
+            logs.addToLogs("Admin", "Modify", newID, "SUCCESS");
         } catch (IOException | org.json.JSONException e) {
             e.printStackTrace();
         }
     }
-
-    public void addUserCard(String name, String floor, List<String> rooms, String id) {
+    public void addUserCard(String floor, List<String> rooms, String id) {
         JPanel card = new JPanel();
         card.setLayout(new BorderLayout());
         card.setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -190,7 +222,7 @@ public class UserSlideBar {
 
         JButton modifyButton = new JButton("Modify");
         JButton revokeButton = new JButton("Revoke");
-        modifyButton.addActionListener(e -> modifyUser(card, name, floor, rooms));
+        modifyButton.addActionListener(e -> modifyUser(card, Encryption.decrypt(id)[0], floor, rooms));
         revokeButton.addActionListener(e -> revokeUser(card, rooms));
 
         JPanel buttonPanel = new JPanel();
@@ -252,13 +284,12 @@ public class UserSlideBar {
             jsonObj.put("data", dataArray);
             Files.write(Paths.get(FILE_PATH), jsonObj.toString(4).getBytes(StandardCharsets.UTF_8));
             Logs logs = Logs.getInstance();
-            logs.addToLogs("Admin","Revoke",userId,"SUCCESS");
+            logs.addToLogs("Admin", "Revoke", userId, "SUCCESS");
             System.out.println("User with ID: " + userId + " removed successfully!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     private void removeRoomFromBookedRoom(List<String> roomsToRemove) {
         try {
             String jsonText = new String(Files.readAllBytes(Paths.get(BOOKED_ROOM_PATH)), StandardCharsets.UTF_8);
@@ -291,9 +322,6 @@ public class UserSlideBar {
         }
     }
 
-    class DataWrapper {
-        List<FloorData> data;
-    }
 
     class FloorData {
         String Name;

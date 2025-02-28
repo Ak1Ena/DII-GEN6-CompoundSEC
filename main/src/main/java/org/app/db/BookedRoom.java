@@ -14,9 +14,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class BookedRoom {
@@ -107,21 +106,18 @@ public class BookedRoom {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         if (label.isSelected()) {
-                            // ถ้าเลือกห้องอยู่แล้ว ให้ยกเลิกการเลือก
                             label.setBackground(Color.LIGHT_GRAY);
                             label.setSelected(false);
                             label.setData("");
-                            // ลบข้อมูลห้องที่ถูกเลือกออกจากตัวแปร data
-                            removeSelectedRoom(label.getText());
                         } else {
-                            // ถ้ายังไม่ถูกเลือก ให้เลือกห้อง
-                            label.setBackground(Color.GRAY);
+                            label.setBackground(Color.WHITE);
+                            label.setForeground(Color.GREEN);
                             label.setSelected(true);
                             label.setData("Selected");
-                            // เพิ่มข้อมูลห้องที่ถูกเลือกเข้าไปในตัวแปร data
-                            addSelectedRoom(label.getText());
                         }
                         System.out.println("Label Name: " + label.getText());
+                        data[j] = label.getText();
+                        j++;
                     }
                 });
             }
@@ -131,30 +127,6 @@ public class BookedRoom {
         }
 
         return table;
-    }
-
-    // ฟังก์ชันสำหรับเพิ่มห้องที่ถูกเลือกลงใน data
-    private void addSelectedRoom(String room) {
-        // เช็คว่า data เต็มหรือไม่ ก่อนที่จะเพิ่มห้อง
-        if (j < data.length) {
-            data[j] = room;
-            j++;
-        }
-    }
-
-    // ฟังก์ชันสำหรับลบห้องที่ถูกเลือกออกจาก data
-    private void removeSelectedRoom(String room) {
-        for (int i = 0; i < j; i++) {
-            if (data[i].equals(room)) {
-                // เมื่อพบห้องที่เลือกไว้ ให้ย้ายข้อมูลที่เหลือมาทางซ้าย
-                for (int k = i; k < j - 1; k++) {
-                    data[k] = data[k + 1];
-                }
-                data[j - 1] = null; // ลบห้องสุดท้าย
-                j--; // ลดจำนวนห้องที่เลือก
-                break;
-            }
-        }
     }
 
     public String[] getData() {
@@ -188,9 +160,9 @@ public class BookedRoom {
 
             LocalDate today = LocalDate.now();
             JSONObject newData = new JSONObject();
+            String psw = PasswordGenerator.generatePassword(6);
             newData.put("ID", userID);
-            newData.put("Password", PasswordGenerator.generatePassword(6));
-            newData.put("Name", name);
+            newData.put("Password", psw);
             newData.put("Room", roomArray);
             newData.put("Floor", floor);
             newData.put("Expire date", today.plusDays(days).toString());
@@ -203,9 +175,52 @@ public class BookedRoom {
             try (FileWriter writer = new FileWriter(FILE_PATH)) {
                 writer.write(root.toString(2));
                 writer.flush();
+                System.out.println("Username : "+name);
+                System.out.println("Password : "+psw);
                 System.out.println("บันทึกข้อมูลเสร็จสิ้น!!!!");
             }
+            addRoom(floor,room);
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addRoom(String floor, String[] rooms) {
+        File file = new File(BR_FILEPATH);
+
+        try {
+            // อ่านไฟล์ JSON
+            String content = new String(Files.readAllBytes(Paths.get(file.getPath())));
+            JSONObject rootNode = new JSONObject(content);
+
+            if (rootNode.has(floor)) {
+                JSONObject floorNode = rootNode.getJSONObject(floor);
+
+                if (floorNode.has("room")) {
+                    JSONArray roomArray = floorNode.getJSONArray("room");
+
+                    // กรองค่า null ออกจาก rooms
+                    List<String> validRooms = Arrays.stream(rooms)
+                            .filter(room -> room != null)
+                            .collect(Collectors.toList());
+
+                    // เพิ่มค่า rooms ลงใน JSON โดยตรวจสอบว่าห้องซ้ำหรือไม่
+                    for (String room : validRooms) {
+                        if (!roomArray.toList().contains(room)) {
+                            roomArray.put(room);
+                        }
+                    }
+
+                    // เขียนกลับไปที่ไฟล์
+                    Files.write(Paths.get(file.getPath()), rootNode.toString(4).getBytes());
+                    System.out.println("Updated booked_rooms.json successfully.");
+                } else {
+                    System.out.println("Room key not found in floor.");
+                }
+            } else {
+                System.out.println("Floor not found.");
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -272,6 +287,12 @@ public class BookedRoom {
                 }
             }
         }
+    }
+
+
+    public void setData(String[] data) {
+        j = 0;
+        this.data = data;
     }
 
 }

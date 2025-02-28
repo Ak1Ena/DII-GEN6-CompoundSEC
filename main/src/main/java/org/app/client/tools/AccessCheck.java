@@ -1,5 +1,6 @@
 package org.app.client.tools;
 
+import org.app.server.enceypt.Encryption;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -15,7 +16,7 @@ public class AccessCheck {
     private static int userID;
 
     private AccessCheck() throws IOException {
-        data = loadData();
+
     }
     public static AccessCheck getInstance() throws IOException {
         if (instance == null) {
@@ -31,14 +32,19 @@ public class AccessCheck {
             System.out.println("ERROR: JSON does not contain 'data' key");
             return new JSONArray();
         }
-        System.out.println("Loaded JSON: " + jsonObj.toString(2)); // Debug JSON Output
         return jsonObj.getJSONArray("data");
     }
     public boolean checkUser(String username, String password) {
+        try{
+            data = loadData();
+        }catch (IOException e){
+            return false;
+        }
         System.out.println("Checking user: " + username + ", " + password);
         for (int i = 0; i < data.length(); i++) {
             JSONObject user = data.getJSONObject(i);
-            if (user.optString("Name").equals(username) && user.optString("Password").trim().equals(password.trim())) {
+            System.out.println(user.optString("ID"));
+            if (Encryption.decrypt(user.optString("ID"))[0].equals(username) && user.optString("Password").trim().equals(password.trim())) {
                 userID = i;
                 System.out.println("User found: ID " + userID);
                 return true;
@@ -49,6 +55,11 @@ public class AccessCheck {
         return false;
     }
     public boolean checkUserFloor(String floor) {
+        try{
+            data = loadData();
+        }catch (IOException e){
+            return false;
+        }
         if (userID < 0 || userID >= data.length()) {
             System.out.println("Invalid userID: " + userID);
             return false;
@@ -58,6 +69,11 @@ public class AccessCheck {
         return user.optString("Floor").equals(floor);
     }
     public boolean checkUserRoom(String room) {
+        try{
+            data = loadData();
+        }catch (IOException e){
+            return false;
+        }
         if (userID < 0 || userID >= data.length()) return false;
         JSONObject user = data.getJSONObject(userID);
 
@@ -72,6 +88,11 @@ public class AccessCheck {
         return false;
     }
     public String getUserID() {
+        try{
+            data = loadData();
+        }catch (IOException e){
+            return "";
+        }
         JSONObject user = data.getJSONObject(userID);
         return user.optString("ID");
     }

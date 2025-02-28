@@ -13,8 +13,8 @@ public class AppInterface {
     private static AppInterface instance;
 
     private AppInterface(){
-        BookedRoom bookedRoom = new BookedRoom();
-        bookedRoom.removeExpiredData(DB_FILEPATH);
+        //BookedRoom bookedRoom = new BookedRoom();
+        //bookedRoom.removeExpiredData(DB_FILEPATH);
     }
 
     public static AppInterface getInstance() {
