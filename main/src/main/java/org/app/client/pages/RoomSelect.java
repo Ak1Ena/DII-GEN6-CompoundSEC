@@ -52,9 +52,9 @@ public class RoomSelect {
             public void actionPerformed(ActionEvent e) {
                 if (accessCheck.checkUserRoom((String) roomComboBox.getSelectedItem())) {
                     AppInterface appInterface = AppInterface.getInstance();
+                    JOptionPane.showMessageDialog(frame, "Access SUCCESS", "Alert", JOptionPane.INFORMATION_MESSAGE);
                     appInterface.run();
                     logs.addToLogs("User", "Access ROOM " + (String) roomComboBox.getSelectedItem(), accessCheck.getUserID(), "SUCCESS");
-
                     frame.dispose();
                 } else {
                     JOptionPane.showMessageDialog(frame, "Access Denied", "Alert", JOptionPane.ERROR_MESSAGE);
