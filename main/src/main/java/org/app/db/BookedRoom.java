@@ -156,7 +156,8 @@ public class BookedRoom {
             }
 
             // Use Timebase-Encryption for user ID
-            String userID = Encryption.encrypt(name, room, floor, days);
+            Encryption encryption = new Encryption();
+            String userID = encryption.encrypt(name, room, floor, days);
 
             LocalDate today = LocalDate.now();
             JSONObject newData = new JSONObject();
