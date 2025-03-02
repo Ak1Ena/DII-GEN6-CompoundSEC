@@ -26,6 +26,7 @@ public class RoomSelect {
         JFrame frame = new JFrame("Room Selector");
         frame.setSize(500, 250);
         frame.setLayout(new FlowLayout(5, 6, 2));
+        frame.setLocationRelativeTo(null);
         Logs logs = Logs.getInstance();
 
         String[] rooms = switch (floor) {

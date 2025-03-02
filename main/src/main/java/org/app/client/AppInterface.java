@@ -13,8 +13,8 @@ public class AppInterface {
     private static AppInterface instance;
 
     private AppInterface(){
-        //BookedRoom bookedRoom = new BookedRoom();
-        //bookedRoom.removeExpiredData(DB_FILEPATH);
+        BookedRoom bookedRoom = new BookedRoom();
+        bookedRoom.removeExpiredData(DB_FILEPATH);
     }
 
     public static AppInterface getInstance() {
@@ -87,7 +87,7 @@ public class AppInterface {
             }
         });
 
-        JButton admin = new JButton("Admin");
+        JButton admin = new JButton("ADMIN");
         admin.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

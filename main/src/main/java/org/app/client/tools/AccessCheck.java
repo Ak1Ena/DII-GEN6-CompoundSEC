@@ -43,10 +43,8 @@ public class AccessCheck {
         System.out.println("Checking user: " + username + ", " + password);
         for (int i = 0; i < data.length(); i++) {
             JSONObject user = data.getJSONObject(i);
-            System.out.println(user.optString("ID"));
             if (Encryption.decrypt(user.optString("ID"))[0].equals(username) && user.optString("Password").trim().equals(password.trim())) {
                 userID = i;
-                System.out.println("User found: ID " + userID);
                 return true;
             }
         }
@@ -65,7 +63,7 @@ public class AccessCheck {
             return false;
         }
         JSONObject user = data.getJSONObject(userID);
-        System.out.println("Checking floor: " + floor + " for userID " + userID);
+        System.out.println("Checking floor: " + floor);
         return user.optString("Floor").equals(floor);
     }
     public boolean checkUserRoom(String room) {

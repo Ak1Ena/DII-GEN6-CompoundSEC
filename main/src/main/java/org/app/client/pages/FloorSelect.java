@@ -36,6 +36,7 @@ public class FloorSelect {
         JFrame frame = new JFrame("Floor Selector");
         frame.setSize(500, 250);
         frame.setLayout(new FlowLayout(5, 6, 2));
+        frame.setLocationRelativeTo(null);
 
         // 🔘 ปุ่มสำหรับชั้นต่าง ๆ
         JButton low = createFloorButton("Low", logs, frame);
@@ -58,7 +59,6 @@ public class FloorSelect {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println(floorName);
                 if (accessCheck.checkUserFloor(floorName)) {
                     try {
                         logs.addToLogs("User", "Access " + floorName.toUpperCase() + " FLOOR", accessCheck.getUserID(), "SUCCESS");

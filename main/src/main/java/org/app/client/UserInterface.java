@@ -27,6 +27,7 @@ public class UserInterface {
         frame = new JFrame("User Login");
         frame.setLayout(new FlowLayout());
         frame.setSize(500, 250);
+        frame.setLocationRelativeTo(null);
 
         frame.add(new JLabel("Username:"));
         JTextField username = new JTextField();

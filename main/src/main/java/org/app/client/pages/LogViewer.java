@@ -14,7 +14,7 @@ public class LogViewer extends JDialog {
 
     private LogViewer(JFrame parent) {
         super(parent, "Log Viewer", true); // true: modal dialog
-        setSize(600, 400);
+        setSize(800, 600);
         setLocationRelativeTo(parent); // ทำให้ JDialog อยู่ตรงกลางของ JFrame ที่เรียก
 
         JPanel panel = new JPanel(new BorderLayout());

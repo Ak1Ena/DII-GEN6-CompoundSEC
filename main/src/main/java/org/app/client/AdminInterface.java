@@ -53,6 +53,7 @@ public class AdminInterface {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.pack();
+        frame.setLocationRelativeTo(null);
 
         return frame;
     }

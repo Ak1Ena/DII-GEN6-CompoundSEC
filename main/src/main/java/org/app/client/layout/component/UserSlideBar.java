@@ -145,7 +145,6 @@ public class UserSlideBar {
                     String[] oldUserIdDecrypted = Encryption.decrypt(oldUserID);
                     Encryption encryption = new Encryption();
                     String userId = encryption.encrypt(updatedName, new String[]{oldUserIdDecrypted[1]}, oldUserIdDecrypted[2], Integer.parseInt(oldUserIdDecrypted[3]) + dayToAdd);
-
                     user.remove(card);
                     userCards.remove(card);
                     addUserCard(floor, rooms, userId);
@@ -154,6 +153,7 @@ public class UserSlideBar {
                     user.revalidate();
                     user.repaint();
 
+                    System.out.println("New username : "+updatedName);
                     dialog.dispose();
                 } catch (NumberFormatException exception) {
                     // หากไม่สามารถแปลงเป็นตัวเลขได้
