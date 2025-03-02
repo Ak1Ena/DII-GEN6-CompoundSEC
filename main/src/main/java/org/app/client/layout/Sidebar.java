@@ -76,8 +76,6 @@ public class Sidebar {
         String roomNumber = searchField.getText().trim();
         if (!roomNumber.isEmpty()) {
             slideBar.filterUserCardsByRoom(roomNumber); // Call the filtering method
-        } else {
-            slideBar.addUserCardsFromJson(); // Reload all cards if search field is empty
         }
         sidebar.revalidate();
         sidebar.repaint();

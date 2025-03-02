@@ -212,7 +212,6 @@ public class BookedRoom {
 
                     // เขียนกลับไปที่ไฟล์
                     Files.write(Paths.get(file.getPath()), rootNode.toString(4).getBytes());
-                    System.out.println("Updated booked_rooms.json successfully.");
                 } else {
                     System.out.println("Room key not found in floor.");
                 }
