@@ -65,13 +65,13 @@ public class BookedRoom {
     private void setRoomHandler() {
         switch (floor) {
             case "High":
-                roomHandler = new HighFloorRoomHandler(bookedRooms);
+                roomHandler = new HighFloorRoomHandler(bookedRooms);//
                 break;
             case "Medium":
-                roomHandler = new MediumFloorRoomHandler(bookedRooms);
+                roomHandler = new MediumFloorRoomHandler(bookedRooms);//
                 break;
             case "Low":
-                roomHandler = new LowFloorRoomHandler(bookedRooms);
+                roomHandler = new LowFloorRoomHandler(bookedRooms);//
                 break;
             default:
                 throw new IllegalArgumentException("Unknown floor: " + floor);
