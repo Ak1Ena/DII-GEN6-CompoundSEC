@@ -3,7 +3,7 @@ package org.app.db;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class HighFloorRoomHandler implements RoomHandler {
+public class HighFloorRoomHandler implements RoomHandler {//
 
     private JSONArray bookedRooms;
 

@@ -2,7 +2,7 @@ package org.app.db;
 
 import org.json.JSONArray;
 
-public class LowFloorRoomHandler implements RoomHandler {
+public class LowFloorRoomHandler implements RoomHandler {//
 
     private JSONArray bookedRooms;
 
