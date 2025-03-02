@@ -105,19 +105,16 @@ public class BookedRoom {
                 label.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        if (label.isSelected()) {
-                            label.setBackground(Color.LIGHT_GRAY);
-                            label.setSelected(false);
-                            label.setData("");
-                        } else {
+                        if (!label.isSelected()) {
                             label.setBackground(Color.WHITE);
                             label.setForeground(Color.GREEN);
                             label.setSelected(true);
                             label.setData("Selected");
+                            System.out.println("Label Name: " + label.getText());
+                            data[j] = label.getText();
+                            j++;
                         }
-                        System.out.println("Label Name: " + label.getText());
-                        data[j] = label.getText();
-                        j++;
+
                     }
                 });
             }
