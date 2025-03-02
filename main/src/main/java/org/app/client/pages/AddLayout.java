@@ -91,7 +91,7 @@ public class AddLayout {
         gbc.gridy++;
         addDialog.add(nameField, gbc);
         gbc.gridy++;
-        addDialog.add(new JLabel("Number of days:"), gbc);
+        addDialog.add(new JLabel("Number of days to stay:"), gbc);
         gbc.gridy++;
         addDialog.add(numberField, gbc);
         gbc.gridy++;

@@ -103,14 +103,14 @@ public class UserSlideBar {
         dialog.setLayout(new BoxLayout(dialog.getContentPane(), BoxLayout.Y_AXIS));
 
         JTextField nameField = new JTextField(name);
-        JTextField expireDateField = new JTextField();
+        JTextField expireDateField = new JTextField("0");
 
         JButton saveButton = new JButton("Save");
         JButton cancelButton = new JButton("Cancel");
 
         dialog.add(new JLabel("Name:"));
         dialog.add(nameField);
-        dialog.add(new JLabel("Expire Date (days or date):"));
+        dialog.add(new JLabel("Number of additional days to stay : "));
         dialog.add(expireDateField);
         dialog.add(saveButton);
         dialog.add(cancelButton);
